@@ -1,15 +1,10 @@
-let mongourl: { url: string };
+const mongourl: { url: string } = { url: 'mongodb://localhost/zoomba' };
 const env = process.env.APP_ENV;
-switch (env) {
-  case 'development':
-    mongourl.url = "mongodb+srv://glorhie33:Oluwadunmininu@33@cluster0.ygqefen.mongodb.net/?retryWrites=true&w=majority";
-    break;
-  case 'production':
-    mongourl.url = '';
-    break;
-  default:
-    mongourl.url = 'mongodb://localhost/zoomba';
-    break;
+if (env == 'development') {
+  mongourl.url =
+    'mongodb+srv://glorhie33:Oluwadunmininu@33@cluster0.ygqefen.mongodb.net/?retryWrites=true&w=majority';
+} else if (env == 'production') {
+  mongourl.url = '';
 }
 
 export default mongourl;
