@@ -49,14 +49,15 @@ import { MetaModule } from './meta/meta.module';
 import { HttpModule } from '@nestjs/axios';
 import { ShippingModule } from './shipping/shipping.module';
 import { ShippingController } from './shipping/shipping.controller';
-import {OrdersController} from "./orders/orders.controller";
+import { OrdersController } from './orders/orders.controller';
 import { BannersModule } from './banners/banners.module';
 import { PaymentOptionsModule } from './payment-options/payment-options.module';
+import mongourl from './utils/mongourl';
 
 @Module({
   imports: [
     HttpModule,
-    MongooseModule.forRoot('mongodb://localhost/zoomba'),
+    MongooseModule.forRoot(mongourl.url),
     MongooseModule.forFeature([
       PermissionModel,
       RoleModel,
