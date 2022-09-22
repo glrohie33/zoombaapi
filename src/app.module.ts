@@ -52,7 +52,9 @@ import { ShippingController } from './shipping/shipping.controller';
 import { OrdersController } from './orders/orders.controller';
 import { BannersModule } from './banners/banners.module';
 import { PaymentOptionsModule } from './payment-options/payment-options.module';
+import { CartFactoryService } from './cart-factory/cart-factory.service';
 import mongourl from './utils/mongourl';
+import {CartFactory} from "./cart/cartFactory";
 
 @Module({
   imports: [
@@ -98,7 +100,7 @@ import mongourl from './utils/mongourl';
     PaymentOptionsModule,
   ],
   controllers: [AppController, CartController, AuthController],
-  providers: [AppService, CartService, AuthService],
+  providers: [AppService, CartService, AuthService, CartFactoryService,CartFactory],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {

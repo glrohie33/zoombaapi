@@ -5,6 +5,7 @@ import { Category } from '../../categories/entities/category.entity';
 import { Store } from '../../stores/entities/store.entity';
 import { Brand } from '../../brands/entities/brand.entity';
 import { Content, ContentSchema } from './subSchema';
+import { Platform } from '../../platform/entities/platform.entity';
 mongoose.plugin(slug);
 export type PostDocument = Post & mongoose.Document;
 
@@ -48,6 +49,8 @@ export class Post {
     slug_padding_size: 1,
   })
   slug: string;
+  @Prop({ type: String, ref: 'platforms' })
+  homePage: Platform | string;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

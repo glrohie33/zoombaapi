@@ -18,6 +18,9 @@ export class PostsService {
     session.startTransaction();
     try {
       const newPost = await this.postModel.create(createPostDto);
+      if (Boolean(createPostDto.homePage)) {
+        await this.removePreviousHomePage(createPostDto.homePage, newPost.id);
+      }
       createPostDto.post = newPost;
       createPostDto.status = true;
       await session.commitTransaction();
@@ -31,6 +34,13 @@ export class PostsService {
     return createPostDto;
   }
 
+  async removePreviousHomePage(slug, id) {
+    await this.postModel.findOneAndUpdate(
+      { homePage: slug, _id: { $ne: id } },
+      { homePage: '' },
+    );
+  }
+
   async findAll() {
     let posts: PostDocument[] = [];
     try {
@@ -41,10 +51,10 @@ export class PostsService {
     return posts;
   }
 
-  async findOne(slug: string) {
+  async findOne(slug: string, filter = 'slug') {
     let post: PostDocument = null;
     try {
-      post = await this.postModel.findOne({ slug: slug }).populate({
+      post = await this.postModel.findOne({ [filter]: slug }).populate({
         path: 'contents',
         populate: { path: 'items' },
       });
@@ -66,6 +76,12 @@ export class PostsService {
         postupdate = await this.postModel.findByIdAndUpdate(id, updatePostDto);
         updatePostDto.status = true;
         updatePostDto.post = postupdate;
+        if (Boolean(updatePostDto.homePage)) {
+          await this.removePreviousHomePage(
+            updatePostDto.homePage,
+            postupdate.id,
+          );
+        }
       } else {
         throw new Error('post does not exist');
       }

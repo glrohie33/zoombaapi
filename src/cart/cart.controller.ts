@@ -16,14 +16,18 @@ export class CartController extends BaseController {
     @Res() res: Response,
     @Req() req: Request,
   ) {
-    try {
-      const { status } = await this.cartService.create(cartDto, res);
-      return this.success(res, { message: 'Item added to cart' });
-    } catch (e) {
+    const { status, message } = await this.cartService.create(cartDto, res);
+    if (!status) {
       return this.error(res, {
-        message: e.message,
+        message,
       });
     }
+    return this.success(res, { message: 'Item added to cart' });
+  }
+  @Get('clear')
+  clearCart(@Res() res: Response) {
+    this.cartService.clearCart(res);
+    return this.success(res, { message: 'cart cleared' });
   }
 
   @Get(':cartType')
@@ -35,18 +39,12 @@ export class CartController extends BaseController {
     const cartDto = new CartDto();
     cartDto.cartType = cartType;
     try {
-      const { cart } = await this.cartService.buildCart(cartDto);
+      const { cart } = await this.cartService.getCart(cartDto);
       return this.success(res, { cart });
     } catch (e) {
       return this.error(res, {
         message: e.message,
       });
     }
-  }
-
-  @Get(':cartName/clear')
-  clearCart(@Res() res: Response, @Param('cartName') cartName: string) {
-    this.cartService.clearCart(cartName, res);
-    return this.success(res, { message: 'cart cleared' });
   }
 }

@@ -23,8 +23,8 @@ export class AppService {
     return 'Hello World!';
   }
 
-  async getPost(slug: string) {
-    const post = await this.postService.findOne(slug);
+  async getPost(slug: string, filter = 'slug') {
+    const post = await this.postService.findOne(slug, filter);
     if (post) {
       this.post = post.toJSON();
       await this.loadProducts();
@@ -38,10 +38,8 @@ export class AppService {
       const { postType, postTypeId } = this.post;
       query.postTypeId = postTypeId;
       if (`${postType}Service` in this && postType != 'post') {
-
         const post = await this[`${postType}Service`].getPostData(query);
         if (post) {
-
           const newPost = Object.assign(this.post, post);
           this.post = newPost;
         }

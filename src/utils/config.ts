@@ -13,7 +13,7 @@ export const COOKIE_EXPIRE: Date = new Date(
 );
 export const STORAGE_PATH = './public/data/uploads/';
 export const ZOOMBACART = 'zoombaCart';
-export const KAMPECART = 'kampeCart';
+export const KAMPECART = 'zoombaKampeCart';
 export const SHIPPINGDATAURL = {
   states: '://api.clicknship.com.ng/clicknship/Operations/States',
   city: '://api.clicknship.com.ng/clicknship/Operations/StateCities?StateName=',
@@ -26,10 +26,9 @@ if (enviroment == 'development') {
   const ALLOWEDLIST = ['http://seller.dev.zoomba.ng', 'http://dev.zoomba.ng'];
 } else if (enviroment == 'production') {
   const ALLOWEDLIST = ['https://seller.zoomba.ng', 'https://zoomba.ng'];
-}else{
+} else {
   const ALLOWEDLIST = ['http://localhost:4000', 'http://localhost:5000'];
 }
-
 
 export interface Request extends ExpressRequest {
   user: UserDocument;
@@ -63,10 +62,19 @@ export const uploadFileHelper = (dest) => {
 };
 
 export const filterObject = (object) => {
+  console.log(object);
   const entries = Object.entries(object);
+  console.log(entries);
   return Object.fromEntries(
     entries.filter((entry: [string, string | any[]]) => {
-      return Boolean(entry[1]) && entry[1].length > 0;
+      let status = false;
+      const data = entry[1];
+      if (Array.isArray(data)) {
+        status = data.length > 0;
+      } else {
+        status = Boolean(data);
+      }
+      return status;
     }),
   );
 };

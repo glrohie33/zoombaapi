@@ -82,7 +82,7 @@ export class Product {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'users' })
   user: User;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'platforms' })
+  @Prop({ type: String, ref: 'platforms' })
   platform: Platform;
 
   @Prop({ type: {} })

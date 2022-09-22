@@ -1,10 +1,19 @@
-import { Controller, Get, Param, Query, Req, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Query,
+  Req,
+  Res,
+  Headers,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { Request } from './utils/config';
 import { Response } from 'express';
 import { BaseController } from './base-controller';
 import { ApiParam } from '@nestjs/swagger';
 import { BaseParams } from './params/baseParams';
+import { platform } from 'os';
 @Controller()
 export class AppController extends BaseController {
   constructor(private readonly appService: AppService) {
@@ -25,10 +34,11 @@ export class AppController extends BaseController {
     @Req() req: Request,
     @Res() res: Response,
     @Query() urlQuery: BaseParams,
+    @Headers('platform') platform: string,
   ) {
-    const slug = 'home-page';
+    const slug = Boolean(platform) ? platform : 'zoomba';
     let data: any = {};
-    data = await this.appService.getPost(slug);
+    data = await this.appService.getPost(slug, 'homePage');
     data.view = 'home';
     return res.status(200).json(data);
   }
@@ -39,5 +49,4 @@ export class AppController extends BaseController {
     post = await this.appService.getPost(slug);
     return res.status(200).json(post);
   }
-
 }

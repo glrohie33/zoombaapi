@@ -9,7 +9,7 @@ import {
   IsObject,
 } from 'class-validator';
 import { KAMPECART, ZOOMBACART } from '../../utils/config';
-import {ProductDocument} from "../../products/entities/product.entity";
+import { ProductDocument } from '../../products/entities/product.entity';
 
 export class CartDto extends Dto {
   constructor() {
@@ -34,9 +34,11 @@ export class CartDto extends Dto {
     message: 'invalid cart',
   })
   cartType: string;
-  cart:any[];
+  cart: any[] | any;
   product: ProductDocument;
   products: ProductDocument[];
   sumTotal: number;
   totalWeight: number;
+  basket = '';
+  basketData: any;
 }

@@ -44,8 +44,8 @@ export class Category {
   @Prop({ type: [String], required: true })
   tags: string[];
 
-  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'platforms' })
-  platform: Platform[];
+  @Prop({ type: [String] })
+  platforms: string[];
   @Prop({ type: Boolean, default: false })
   topCategory: boolean;
 }

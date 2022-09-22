@@ -10,6 +10,7 @@ export class CreatePostDto extends Dto {
   postType = 'post';
   meta: '';
   tags: '';
+  homePage: string;
   post: PostDocument;
   postTypeId: mongoose.Schema.Types.ObjectId = null;
 }

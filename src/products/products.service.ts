@@ -48,23 +48,22 @@ export class ProductsService {
   }
 
   async findAll(params: ProductParams) {
-    const { price, brand, currentPage, perPage } = params;
-    const allFilters = { price, brand };
+    const { price, brand, currentPage, perPage, categories} = params;
+    const allFilters = { price, brand, categories };
     const filters: any = filterObject(allFilters);
     console.log(filters);
     let products: any = [];
     let total = 0;
-    const { getFilters, filterBy } = params;
-    if (getFilters) {
-      filters[filterBy] = getFilters;
-    }
+    // const { getFilters, filterBy } = params;
+    // if (getFilters) {
+    //   filters[filterBy] = getFilters;
+    // }
 
     // products = await this.productModel.find()
     products = await this.productModel
       .find(filters)
       .populate('categories', ['name'])
       .populate('brand', ['name'])
-      .populate('platform', ['name'])
       .skip(perPage * (currentPage - 1))
       .limit(perPage);
 

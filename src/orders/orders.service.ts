@@ -21,89 +21,24 @@ import { CreateOrderItemDto } from 'src/order-items/dto/create-order-item.dto';
 import { OrderItemsService } from 'src/order-items/order-items.service';
 import { ProductDocument } from 'src/products/entities/product.entity';
 import { OrderParamsDto } from '../order-items/dto/order-params.dto';
+import { OrderFactory } from './platformOrders/orderFactory';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @Inject(REQUEST) private req: Request,
     private cartService: CartService,
-    private shippingService: ShippingService,
     private gatewayFactory: GatewayFactory,
-    private metaService: MetaService,
     private orderItemsService: OrderItemsService,
+    private orderFactory: OrderFactory,
     @InjectModel('orders') private orderModel: Model<OrderDocument>,
     @InjectConnection() private connection: mongoose.Connection,
   ) {}
 
   async create(createOrderDto: CreateOrderDto): Promise<CreateOrderDto> {
-    const session = await this.connection.startSession();
-    const transaction = await session.startTransaction();
-    try {
-      const cartDto = new CartDto();
-      cartDto.cartType = createOrderDto.cartType;
-      createOrderDto.cart = await this.cartService.buildCart(cartDto);
-
-      await this.getShippingAddress(createOrderDto);
-      await this.getShippingPrice(createOrderDto);
-      createOrderDto.totalPrice = createOrderDto.cart.sumTotal;
-      createOrderDto.grandTotal =
-        createOrderDto.cart.sumTotal + createOrderDto.shippingPrice;
-      createOrderDto.orderItems = createOrderDto.cart.cart;
-      createOrderDto.user = this.req.user.id;
-      const order = await this.orderModel.create(createOrderDto);
-      createOrderDto.order = order;
-      createOrderDto.order.orderCode = uuidv5('order' + order.id, uuidv5.URL);
-      createOrderDto.order.paymentRef = this.generatePaymentRef(createOrderDto);
-      await createOrderDto.order.save();
-      await session.commitTransaction();
-      createOrderDto.status = true;
-    } catch (e) {
-      await session.abortTransaction();
-      console.log(e);
-      createOrderDto.message = e.message;
-    } finally {
-      await session.endSession();
-    }
-
+    const { platform } = this.req.headers;
+    await this.orderFactory.getInstance(platform).createOrder(createOrderDto);
     return createOrderDto;
-  }
-
-  generatePaymentRef(createOrderDto: CreateOrderDto) {
-    return this.gatewayFactory
-      .getInstance(createOrderDto.paymentGateway)
-      .generateRef(createOrderDto.order._id);
-  }
-
-  async getShippingAddress(createOrderDto: CreateOrderDto) {
-    const shippingAddress = await this.metaService.findOne(
-      createOrderDto.shippingAddressId,
-    );
-    if (!shippingAddress) {
-      throw new Error('shipping address not found');
-    }
-    createOrderDto.shippingAddress = shippingAddress.data;
-  }
-
-  async getShippingPrice(createOrderDto: CreateOrderDto) {
-    const {
-      shippingAddress: { city, townCode },
-      cart: { totalWeight },
-    } = createOrderDto;
-    const shippingDto = new CreateShippingDto();
-    shippingDto.to = city;
-    shippingDto.weight = <string>(<unknown>totalWeight);
-    if (townCode) {
-      shippingDto.forwarding = townCode;
-    }
-    console.log(shippingDto);
-    const { status, fee } = await this.shippingService.getDeliveryPrice(
-      shippingDto,
-    );
-    console.log(status, fee);
-    if (fee == 0 || !status) {
-      throw new Error('cannot process order please try again later');
-    }
-    createOrderDto.shippingPrice = fee;
   }
 
   async findAll(params: OrderParamsDto) {
@@ -136,7 +71,7 @@ export class OrdersService {
     return `This action removes a #${id} order`;
   }
 
-  async verifyOrder(verifyOrderDto: VerifyOrderDto): Promise<VerifyOrderDto> {
+  async verifyOrder(verifyOrderDto: VerifyOrderDto) {
     const order = await this.findOne(verifyOrderDto.orderId).populate(
       'platformId',
     );
@@ -145,36 +80,9 @@ export class OrdersService {
         'order does not exist and could not be verified',
       ];
     } else {
-      const { status } = await this.gatewayFactory
-        .getInstance(order.paymentGateway)
-        .verifyPayment(verifyOrderDto);
-      if (status) {
-        order.paymentStatus = 'complete';
-        order.save();
-        verifyOrderDto.status = true;
-        this.finalizeOrder(order);
-        this.cartService.clearCart(
-          `${order.platformId.name}Cart`,
-          verifyOrderDto.res,
-        );
-      }
+      const { platform } = this.req.headers;
+      await this.orderFactory.getInstance(platform).verifyOrder(verifyOrderDto);
     }
-
     return verifyOrderDto;
-  }
-
-  finalizeOrder(order) {
-    console.log('here');
-    order.orderItems.forEach(async (item) => {
-      const createOrderItemDto = new CreateOrderItemDto();
-      createOrderItemDto.productId = item.productId;
-      createOrderItemDto.productName = item.productName;
-      createOrderItemDto.price = item.price;
-      createOrderItemDto.purchasePrice = item.purchasePrice;
-      createOrderItemDto.quantity = item.quantity;
-      createOrderItemDto.seller = item.seller;
-      createOrderItemDto.orderId = order._id;
-      await this.orderItemsService.create(createOrderItemDto);
-    });
   }
 }

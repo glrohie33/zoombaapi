@@ -65,13 +65,16 @@ export class CategoriesService {
   }
 
   async findAll(params: CategoryParams) {
+    const { platform } = this.req.headers;
     const { currentPage, perPage, search, parent, children } = params;
-    const conditions: { parent?: string } = {};
+    const conditions: any = {};
     if (Boolean(children)) {
       conditions.parent = parent || null;
     }
 
-    console.log(conditions);
+    if (Boolean(platform)) {
+      conditions.platforms = { $elemMatch: { $eq: platform } };
+    }
     const categoryQuery = this.categoryModel
       .find(conditions)
       .regex('title', search);
@@ -84,7 +87,6 @@ export class CategoriesService {
       .skip((currentPage - 1) * perPage)
       .populate('categoryImage')
       .populate('attributes', ['name'])
-      .populate('platform', ['name'])
       .populate('parent', ['name'])
       .sort({ createdAt: -1 });
 
@@ -97,7 +99,6 @@ export class CategoriesService {
     return this.categoryModel
       .findById(id)
       .populate('attributes')
-      .populate('platform', ['name', 'slug']);
   }
 
   update(id: string, updateCategoryDto: UpdateCategoryDto) {
@@ -112,10 +113,13 @@ export class CategoriesService {
     const param: ProductParams = Object.assign(new ProductParams(), query);
     param.categoryId = param.postTypeId;
     const product = await this.productService.findAll(param);
+
     const mainCategory = await this.findOne(param.postTypeId);
-    const attributes = mainCategory.attributes;
+    console.log(mainCategory);
+    const attributes = mainCategory?.attributes;
     const categoryParam = new CategoryParams();
     categoryParam.parent = param.postTypeId;
+    categoryParam.children = true;
     const categoryChildren = await this.findAll(categoryParam);
 
     return {
@@ -128,6 +132,11 @@ export class CategoriesService {
   }
 
   getTopCategories() {
-    return this.categoryModel.find({ topCategory: true });
+    const platform = this.req.headers['platform'];
+
+    return this.categoryModel.find({
+      topCategory: true,
+      platforms: { $elemMatch: { $eq: platform } },
+    });
   }
 }

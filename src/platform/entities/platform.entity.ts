@@ -19,15 +19,16 @@ export class Platform {
     slug_padding_size: 1,
   })
   slug: string;
+
   @Prop({ type: String, unique: true })
-  platformKey: string;
+  key: string;
 }
 
 export const PlatformSchema = SchemaFactory.createForClass(Platform);
 
 PlatformSchema.virtual('products', {
   ref: 'products',
-  localField: '_id',
+  localField: 'key',
   foreignField: 'platform',
 });
 

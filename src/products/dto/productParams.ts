@@ -47,12 +47,15 @@ export class ProductParams extends BaseParams {
 
   @Expose()
   get categories() {
-    return (
-      this.categoryId && {
-        $elemMatch: {
-          $eq: new mongoose.Schema.Types.ObjectId(this.categoryId),
-        },
-      }
-    );
+    const { categoryId } = this;
+    if (!categoryId) {
+      return '';
+    }
+
+    return {
+      $elemMatch: {
+        $eq: categoryId,
+      },
+    };
   }
 }
