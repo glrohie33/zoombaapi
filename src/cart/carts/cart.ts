@@ -16,7 +16,7 @@ export abstract class Cart {
   }
 
   mapProducts(cartDto) {
-    cartDto.products.forEach((product) => {
+    cartDto.products?.forEach((product) => {
       const index = cartDto.cart.findIndex((c) => c.productId == product.id);
       const cart = cartDto.cart[index];
       cart.productId = product.id;
@@ -48,7 +48,6 @@ export abstract class Cart {
   }
 
   async buildCart(cartDto: CartDto) {
-    this.getCart(cartDto);
     await this.getProducts(cartDto);
     this.mapProducts(cartDto);
     this.getSumTotal(cartDto);
@@ -68,6 +67,8 @@ export abstract class Cart {
     cartDto.cart = cartDto.cart.filter(
       (item) => item.productId !== cartDto.productId,
     );
+
+    console.log(cartDto.cart);
   }
 
   saveCart(cartDto, res) {
@@ -98,6 +99,8 @@ export abstract class Cart {
     if (!this.verifyQuantity(cartDto)) {
       throw new Error('quantity is more than available product');
     }
+
+
     if (cartDto.quantity == 0) {
       this.removeItem(cartDto);
     } else {
@@ -106,21 +109,24 @@ export abstract class Cart {
   }
   async getProducts(cartDto) {
     const ids = cartDto.cart.map((item) => item.productId);
-    cartDto.products = await this.productModel
-      .find({ _id: { $in: ids } })
-      .select([
-        'name',
-        'price',
-        'weight',
-        'variations',
-        'quantity',
-        'mainImage',
-        'purchasePrice',
-        'unit',
-        'seller',
-      ])
-      .populate('brand', ['name'])
-      .populate('store', ['user']);
+    if (ids.length > 0){
+      cartDto.products = await this.productModel
+          .find({ _id: { $in: ids } })
+          .select([
+            'name',
+            'price',
+            'weight',
+            'variations',
+            'quantity',
+            'mainImage',
+            'purchasePrice',
+            'unit',
+            'seller',
+          ])
+          .populate('brand', ['name'])
+          .populate('store', ['user']);
+    }
+
   }
 
   clearCart(res: Response) {

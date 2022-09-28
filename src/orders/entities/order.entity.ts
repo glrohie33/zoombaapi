@@ -5,6 +5,8 @@ import { toFloat } from '../../helpers/numberHelpers';
 import { v5 as uuidv5 } from 'uuid';
 import { METHODS } from 'http';
 import { Platform } from 'src/platform/entities/platform.entity';
+import { type } from 'os';
+import { Subscription } from 'rxjs';
 
 export type OrderDocument = Order & mongoose.Document;
 @Schema({
@@ -29,6 +31,10 @@ export class Order {
   user: User;
   @Prop({ type: Number, set: (v) => toFloat(v, 2), required: true })
   grandTotal: number;
+
+  @Prop({ type: Number, set: (v) => toFloat(v, 2), required: true })
+  downPayment: number;
+
   @Prop({ type: Number, set: (v) => toFloat(v, 2), required: true })
   totalPrice: number;
   @Prop({ type: Number, set: (v) => toFloat(v, 2), required: true })
@@ -37,14 +43,18 @@ export class Order {
   vat: number;
   @Prop({ type: [String] })
   coupon: string[];
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'platforms' })
-  platformId: Platform;
+  @Prop({ type: String })
+  platform: string;
   @Prop({ type: String })
   paymentRef: string;
   @Prop({ type: mongoose.Schema.Types.Mixed })
   shippingAddress: any;
   @Prop({ type: Array, required: true })
   orderItems: any[];
+  @Prop({ type: Number, default: null })
+  subscriptionPeriod: number;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref:'subscriptions', default: null })
+  subscription: Subscription;
 }
 
 const OrderSchema = SchemaFactory.createForClass(Order);

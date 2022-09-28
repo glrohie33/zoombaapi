@@ -37,7 +37,7 @@ export function IsMatch(
   };
 }
 
-const model = mongoose.model('users', UserSchema);
+const model = mongoose.connection.model('users', UserSchema);
 export function IsUnique(
   property: string,
   validationOptions?: IsUniqueOptions,
@@ -60,7 +60,6 @@ export function IsUnique(
           } else {
             search['id'] =  value ;
           }
-
           const relatedValue = (args.object as any)[relatedPropertyName];
           return true; // you can return a Promise<boolean> here as well, if you want to make async validation
         },

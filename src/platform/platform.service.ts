@@ -20,13 +20,16 @@ export class PlatformService {
     const session = await this.connection.startSession();
     await session.startTransaction();
     try {
-      createPlatformDto.platform = await this.platformModel.create(
+      createPlatformDto.platform = await this.platformModel.findOneAndUpdate(
+        { key: createPlatformDto.key },
         createPlatformDto,
+        { upsert: true, new: true },
       );
       await this.uploadFile(createPlatformDto);
       createPlatformDto.status = true;
       await session.commitTransaction();
     } catch (e) {
+      console.log(e);
       await session.abortTransaction();
     } finally {
       await session.endSession();

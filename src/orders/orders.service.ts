@@ -37,7 +37,14 @@ export class OrdersService {
 
   async create(createOrderDto: CreateOrderDto): Promise<CreateOrderDto> {
     const { platform } = this.req.headers;
-    await this.orderFactory.getInstance(platform).createOrder(createOrderDto);
+    console.log(platform);
+    try {
+      await this.orderFactory.getInstance(platform).createOrder(createOrderDto);
+    } catch (e) {
+      console.log(e);
+      createOrderDto.message = e.message;
+    }
+
     return createOrderDto;
   }
 
@@ -51,7 +58,6 @@ export class OrdersService {
       .clone()
       .limit(perPage)
       .skip((currentPage - 1) * perPage)
-      .populate('platformId', ['name'])
       .populate('user', ['email'])
       .sort({ createdAt: -1 });
     params.orders = orders;
@@ -72,16 +78,21 @@ export class OrdersService {
   }
 
   async verifyOrder(verifyOrderDto: VerifyOrderDto) {
-    const order = await this.findOne(verifyOrderDto.orderId).populate(
-      'platformId',
-    );
+    const order = await this.findOne(verifyOrderDto.orderId);
     if (!order) {
       verifyOrderDto.message = [
         'order does not exist and could not be verified',
       ];
     } else {
       const { platform } = this.req.headers;
-      await this.orderFactory.getInstance(platform).verifyOrder(verifyOrderDto);
+      verifyOrderDto.order = order;
+      try {
+        await this.orderFactory
+          .getInstance(platform)
+          .finishOrder(verifyOrderDto);
+      } catch (e) {
+        verifyOrderDto.message = e.message;
+      }
     }
     return verifyOrderDto;
   }

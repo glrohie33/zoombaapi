@@ -28,7 +28,7 @@ export class CartService {
     try {
       await this.cartClass.createCart(cartDto, res);
       cartDto.message =
-        cartDto.action == 'add'
+        cartDto.action == 'inc'
           ? 'Item Added to Cart'
           : 'Item Removed From Cart';
       cartDto.status = true;

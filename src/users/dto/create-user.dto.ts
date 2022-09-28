@@ -8,8 +8,11 @@ import {
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 import { IsMatch, IsUnique } from '../../utils/customValidators';
 import { User } from '../entities/user.entity';
+import {InjectModel} from "@nestjs/mongoose";
 
 export class CreateUserDto {
+
+
   @ApiModelProperty({ type: String })
   @IsNotEmpty()
   @IsString()
@@ -50,7 +53,14 @@ export class CreateUserDto {
   confirmPassword: string;
 
   @ApiModelProperty({ type: String })
-  refferalCode: string;
+  referalCode: string;
+
+  @ApiModelProperty({ type: String })
+  @IsNotEmpty()
+  username: string;
+
+  @ApiModelProperty({ type: String })
+  referee: string;
 
   newUser: User;
   status = false;

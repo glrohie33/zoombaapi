@@ -17,6 +17,7 @@ import { OrderItemsService } from '../../../order-items/order-items.service';
 
 @Injectable()
 export class ZoombaOrder extends Order {
+  protected readonly downPercent: number = 100;
   constructor(
     protected shippingService: ShippingService,
     protected metaService: MetaService,
@@ -32,9 +33,17 @@ export class ZoombaOrder extends Order {
 
   async createOrder(createOrderDto: CreateOrderDto) {
     createOrderDto.user = this.req.user.id;
+    await this.insertOrder(createOrderDto);
+  }
+  async finishOrder(order) {
+    await this.verifyOrder(order);
   }
 
   postOrderAction() {
+    return null;
+  }
+
+  addRefferalBonus(order: OrderDocument) {
     return null;
   }
 }

@@ -3,6 +3,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Role } from '../../roles/entities/role.entity';
 import * as bcrypt from 'bcryptjs';
 import { Meta } from '../../meta/entities/meta.entity';
+
 export type UserDocument = User & mongoose.Document;
 
 @Schema({
@@ -17,6 +18,16 @@ export class User {
   lastname: string;
   @Prop({
     type: String,
+    validate: {
+      validator: async function (email) {
+        const user = await this.constructor.findOne({ email });
+        if (user) {
+          return false;
+        }
+        return true;
+      },
+      message: ({ value }) => `${value} already exist`,
+    },
     required: [true, 'the email field is required'],
     unique: [true, 'This email already exist'],
   })
@@ -27,12 +38,32 @@ export class User {
     required: [true, 'the email field is required'],
   })
   password: string;
-  @Prop({ type: String, unique: true, required: true })
+  @Prop({
+    type: String,
+    validate: {
+      validator: async function (username) {
+        const user = await this.constructor.findOne({ username });
+        if (user) {
+          return false;
+        }
+        return true;
+      },
+      message: ({ value }) => `${value} already exist`,
+    },
+    unique: true,
+    required: true,
+  })
   username: string;
   @Prop({ type: String, default: 'user' })
   role: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'metas' })
   defaultAddress: Meta | string;
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'users',
+    default: null,
+  })
+  referee: User | string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

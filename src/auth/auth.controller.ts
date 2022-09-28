@@ -23,17 +23,20 @@ export class AuthController {
   ) {
     const auth = await this.authService.loginUser(loginDto);
     const { status, user, token, errorMessage } = auth;
-
+    console.log(status, token,user);
     if (auth.status) {
       res.cookie(COOKIE_NAME, token, {
         expires: COOKIE_EXPIRE,
         httpOnly: true,
         secure: false,
       });
+
       return res.status(HttpStatus.OK).json({
         status,
         user,
       });
+
+
     } else {
       return res.status(HttpStatus.BAD_REQUEST).json({
         code: HttpStatus.BAD_REQUEST,

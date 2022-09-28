@@ -2,7 +2,7 @@ import { CartDto } from '../../cart/dto/cart-dto';
 import { ProductDocument } from '../../products/entities/product.entity';
 import { Dto } from '../../extensions/dto';
 import { OrderDocument } from '../entities/order.entity';
-import {IsNotEmpty} from "class-validator";
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateOrderDto extends Dto {
   constructor() {
@@ -19,7 +19,7 @@ export class CreateOrderDto extends Dto {
 
   paymentRef: string;
   cart: CartDto;
-  totalPrice:number;
+  totalPrice: number;
 
   shippingAddress: {
     firstname: string;
@@ -38,5 +38,8 @@ export class CreateOrderDto extends Dto {
   vat: number;
   orderItems: ProductDocument[];
   order: OrderDocument;
-  user:string;
+  user: string;
+  downPayment: number;
+  subscriptionPeriod:number;
+
 }

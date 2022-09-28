@@ -11,6 +11,10 @@ import { MetaModule } from '../meta/meta.module';
 import { OrderItemsModule } from 'src/order-items/order-items.module';
 import { OrderFactory } from './platformOrders/orderFactory';
 import { ZoombaOrder } from './platformOrders/impl/zoombaOrder';
+import { SubscriptionModule } from '../subscription/subscription.module';
+import { RepaymentsModule } from '../repayments/repayments.module';
+import {KampeOrder} from "./platformOrders/impl/kampeOrder";
+import {WalletModule} from "../wallet/wallet.module";
 
 @Module({
   imports: [
@@ -19,8 +23,11 @@ import { ZoombaOrder } from './platformOrders/impl/zoombaOrder';
     MetaModule,
     MongooseModule.forFeature([OrderModel]),
     OrderItemsModule,
+    SubscriptionModule,
+    RepaymentsModule,
+    WalletModule,
   ],
   controllers: [OrdersController],
-  providers: [OrdersService, GatewayFactory, OrderFactory, ZoombaOrder],
+  providers: [OrdersService, GatewayFactory, OrderFactory, ZoombaOrder,KampeOrder],
 })
 export class OrdersModule {}

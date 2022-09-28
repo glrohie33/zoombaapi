@@ -23,6 +23,7 @@ export class AuthMiddleware implements NestMiddleware {
       });
     }
     let isValid: any = false;
+    let userData: any;
     try {
       isValid = jwt.verify(token, JWT_TOKEN);
     } catch (e) {}
@@ -33,7 +34,7 @@ export class AuthMiddleware implements NestMiddleware {
       });
     }
 
-    const user = await this.userModel.findOne({ id: isValid.id });
+    const user = await this.userModel.findById(isValid.id);
     req.user = user;
     if (!user) {
       return res.status(errCode).json({

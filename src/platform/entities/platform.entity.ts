@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
+import * as slug from 'mongoose-slug-generator';
 
 export type PlatformDocument = Platform & mongoose.Document;
 @Schema({
@@ -11,16 +12,7 @@ export class Platform {
   @Prop({ type: String, unique: true })
   name: string;
 
-  @Prop({
-    type: String,
-    slug: 'name',
-    unique: true,
-    require: true,
-    slug_padding_size: 1,
-  })
-  slug: string;
-
-  @Prop({ type: String, unique: true })
+  @Prop({ type: String, unique: true, required: true })
   key: string;
 }
 

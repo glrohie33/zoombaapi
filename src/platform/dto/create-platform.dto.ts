@@ -11,6 +11,7 @@ export class CreatePlatformDto extends Dto {
   @ApiModelProperty({ type: String, format: 'binary' })
   image: any;
 
+  @IsNotEmpty()
   @ApiModelProperty({ type: String })
   key: string;
   platform: PlatformDocument;

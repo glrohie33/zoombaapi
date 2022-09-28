@@ -37,15 +37,15 @@ export class KampeCart extends Cart {
       },
     };
 
-    if (!Boolean(cartDto.basket)) {
+    if (!Boolean(baskets[cartDto.basket])) {
       return (cartDto.basketData = false);
     }
 
-    cartDto.basketData = cartDto.basket;
+    cartDto.basketData = baskets[cartDto.basket];
   }
 
   async createCart(cartDto: CartDto, res: Response) {
-    if(!Boolean(cartDto.basket)){
+    if (!Boolean(cartDto.basket)) {
       throw new Error('please select a cart');
     }
     this.getCart(cartDto);
@@ -56,12 +56,14 @@ export class KampeCart extends Cart {
     if (!cartDto.basketData) {
       throw new Error('Opps seems like this basket is not available');
     }
-    const { sumTotal, basketData } = cartDto;
+    const { sumTotal, basketData, action } = cartDto;
 
-    if (sumTotal > basketData) {
-      throw new Error(
-        'Opps your basket is a little bit more that the capacity can you adjust please',
-      );
+    if (action == 'inc') {
+      if (sumTotal > basketData.max) {
+        throw new Error(
+          'Opps your basket is a little bit more that the capacity can you adjust please',
+        );
+      }
     }
 
     this.saveCart(cartDto, res);

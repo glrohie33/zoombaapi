@@ -44,6 +44,7 @@
     "dotenv": "^16.0.1",
     "flutterwave-node-v3": "^1.0.10",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.4",
     "mongoose": "^6.4.4",
     "mongoose-slug-generator": "^1.0.4",
     "qs": "^6.11.0",

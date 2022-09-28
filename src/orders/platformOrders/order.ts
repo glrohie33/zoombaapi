@@ -13,6 +13,7 @@ import { v5 as uuidv5 } from 'uuid';
 import { Request } from '../../utils/config';
 import { OrderDocument } from '../entities/order.entity';
 import { Model } from 'mongoose';
+import {WalletDocument} from "../../wallet/entities/wallet.entity";
 
 export abstract class Order {
   protected abstract gatewayFactory: GatewayFactory;
@@ -23,7 +24,7 @@ export abstract class Order {
   protected abstract connection: mongoose.Connection;
   protected abstract req: Request;
   protected abstract orderModel: Model<OrderDocument>;
-
+  protected abstract readonly downPercent: number;
   generatePaymentRef(createOrderDto: CreateOrderDto) {
     return this.gatewayFactory
       .getInstance(createOrderDto.paymentGateway)
@@ -51,15 +52,13 @@ export abstract class Order {
     if (townCode) {
       shippingDto.forwarding = townCode;
     }
-    console.log(shippingDto);
     const { status, fee } = await this.shippingService.getDeliveryPrice(
       shippingDto,
     );
-    console.log(status, fee);
     if (fee == 0 || !status) {
       throw new Error('cannot process order please try again later');
     }
-    createOrderDto.shippingPrice = fee;
+    return fee;
   }
   finalizeOrder(order) {
     order.orderItems.forEach(async (item) => {
@@ -82,30 +81,37 @@ export abstract class Order {
       .verifyPayment(verifyOrderDto);
     if (status) {
       order.paymentStatus = 'complete';
-      order.save();
+      await order.save();
       verifyOrderDto.status = true;
       this.finalizeOrder(order);
-      this.cartService.clearCart(
-        verifyOrderDto.res,
-      );
+      this.cartService.clearCart(verifyOrderDto.res);
     }
     return verifyOrderDto;
   }
 
-  async insterOrder(createOrderDto) {
+  async insertOrder(createOrderDto) {
     const session = await this.connection.startSession();
     const transaction = await session.startTransaction();
     try {
       const cartDto = new CartDto();
+      const subscriptionPeriod =
+        createOrderDto.subscriptionPeriod == 0
+          ? 1
+          : createOrderDto.subscriptionPeriod;
       cartDto.cartType = createOrderDto.cartType;
       createOrderDto.cart = await this.cartService.getCart(cartDto);
       await this.getShippingAddress(createOrderDto);
-      await this.getShippingPrice(createOrderDto);
-      createOrderDto.totalPrice = createOrderDto.cart.sumTotal;
+      const shippingPrice = await this.getShippingPrice(createOrderDto);
+      const totalPrice = createOrderDto.cart.sumTotal * subscriptionPeriod;
+      createOrderDto.shippingPrice = shippingPrice * subscriptionPeriod;
+      createOrderDto.totalPrice = totalPrice;
       createOrderDto.grandTotal =
-        createOrderDto.cart.sumTotal + createOrderDto.shippingPrice;
+        createOrderDto.totalPrice + createOrderDto.shippingPrice;
       createOrderDto.orderItems = createOrderDto.cart.cart;
-
+      createOrderDto.downPayment =
+        createOrderDto.grandTotal * (this.downPercent / 100);
+      createOrderDto.user = this.req.user.id;
+      createOrderDto.platform = this.req.headers.platform;
       const order = await this.orderModel.create(createOrderDto);
       createOrderDto.order = order;
       createOrderDto.order.orderCode = uuidv5('order' + order.id, uuidv5.URL);
@@ -123,5 +129,9 @@ export abstract class Order {
   }
   abstract createOrder(createOrderDto: CreateOrderDto);
 
-  abstract postOrderAction();
+  abstract finishOrder(verifyOrderDto: VerifyOrderDto);
+
+  abstract postOrderAction(order: OrderDocument);
+
+  abstract addRefferalBonus(order: OrderDocument);
 }

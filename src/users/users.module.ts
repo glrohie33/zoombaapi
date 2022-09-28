@@ -5,9 +5,10 @@ import {MongooseModule} from "@nestjs/mongoose";
 import {UserModel} from "./entities/user.entity";
 import {RoleModel} from "../roles/entities/role.entity";
 import {MetaModule} from "../meta/meta.module";
+import {WalletModule} from "../wallet/wallet.module";
 
 @Module({
-  imports:[MongooseModule.forFeature([UserModel,RoleModel]),MetaModule],
+  imports:[MongooseModule.forFeature([UserModel,RoleModel]),MetaModule,WalletModule],
   controllers: [UsersController],
   providers: [UsersService],
   exports:[MongooseModule,UsersService]

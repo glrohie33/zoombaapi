@@ -10,21 +10,43 @@ import { JWT_EXPIRES, JWT_TOKEN } from '../utils/config';
 import { Request } from '../utils/config';
 import { REQUEST } from '@nestjs/core';
 import useRealTimers = jest.useRealTimers;
+import { CreateWalletDto } from '../wallet/dto/create-wallet.dto';
+import { WalletService } from '../wallet/wallet.service';
 @Injectable()
 export class UsersService {
   constructor(
     @Inject(REQUEST) private request: Request,
     @InjectModel('users') private userModel: Model<UserDocument>,
+    private walletService: WalletService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<CreateUserDto> {
     try {
+      const { referee, username } = createUserDto;
+      if (referee) {
+        if (username == referee) {
+          throw new Error('Opps referee and username cannot match');
+        }
+        const ref = await this.userModel.findOne({ username: referee });
+        if (!ref) {
+          throw new Error(`${referee} username not found in our database`);
+        }
+        createUserDto.referee = <string>(<unknown>ref._id);
+      }
       const user = await this.userModel.create(createUserDto);
+      const createWalletDto = new CreateWalletDto();
+      createWalletDto.user = user._id;
+      createWalletDto.amount = 1000;
+      this.walletService.create(createWalletDto).then((r) => true);
       createUserDto.newUser = user;
       createUserDto.status = true;
       createUserDto.token = this.generateToken(user);
     } catch (e) {
-      createUserDto.errorMessage = [e.message];
+      let message = e.message;
+      if (e.message.includes('users validation failed:')) {
+        message = e.message.replace('users validation failed', '').split(',');
+      }
+      createUserDto.errorMessage = message;
     }
 
     return createUserDto;
@@ -71,11 +93,10 @@ export class UsersService {
   }
 
   generateToken(user: UserDocument): string {
-    // const data = {
-    //   id: user.id,
-    //   role: user.role,
-    // };
-    const data = {};
+    const data = {
+      id: user.id,
+      role: user.role,
+    };
     const token = jwt.sign(data, JWT_TOKEN, {
       expiresIn: JWT_EXPIRES,
     });

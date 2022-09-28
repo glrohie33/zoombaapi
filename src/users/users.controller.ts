@@ -103,6 +103,7 @@ export class UsersController extends BaseController {
     @Req() req: Request,
   ) {
     let userData: any = [];
+    console.log(req.user);
     if (req.user) {
       const userModel = req.user;
       const match: any = {};
