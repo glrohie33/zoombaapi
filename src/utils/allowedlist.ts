@@ -5,7 +5,7 @@ if (enviroment == 'development') {
   domains = [
     'http://seller.dev.zoomba.ng',
     'http://dev.zoomba.ng',
-    'https://kampe.dev.zoomba.ng',
+    'http://kampe.dev.zoomba.ng',
   ];
 } else if (enviroment == 'production') {
   domains = [
