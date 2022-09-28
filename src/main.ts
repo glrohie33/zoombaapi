@@ -5,13 +5,26 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import allowedlist from './utils/allowedlist';
-console.log(process.argv);
+import { WinstonModule } from 'nest-winston';
+import * as winston from 'winston';
+const logger = winston.createLogger({
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: 'combined.log' }),
+  ],
+});
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
       origin: allowedlist,
       credentials: true,
     },
+    logger: WinstonModule.createLogger({
+      transports: [
+        new winston.transports.File({ filename: 'error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'combined.log' }),
+      ],
+    }),
   });
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ limit: '50mb' }));
