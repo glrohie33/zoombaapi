@@ -1,4 +1,4 @@
-const mongourl: { url: string } = { url: 'mongodb://localhost/zoomba' };
+const mongourl: { url: string } = { url: 'mongodb://localhost/zoomba-local' };
 const env = process.env.APP_ENV;
 if (env == 'development') {
   mongourl.url =

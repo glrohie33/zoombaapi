@@ -9,7 +9,7 @@ import { REQUEST } from '@nestjs/core';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AppService {
-  post: any = null;
+  post: any = {};
   factories: any;
   constructor(
     @Inject(REQUEST) private req: Request,
