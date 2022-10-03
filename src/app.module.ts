@@ -1,4 +1,5 @@
 import {
+  Logger,
   MiddlewareConsumer,
   Module,
   NestModule,
@@ -109,6 +110,7 @@ import { RepaymentsModule } from './repayments/repayments.module';
     AuthService,
     CartFactoryService,
     CartFactory,
+    Logger,
   ],
 })
 export class AppModule implements NestModule {

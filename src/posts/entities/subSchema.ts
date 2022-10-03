@@ -10,9 +10,10 @@ export class Content {
 
   @Prop({ type: String })
   title: string;
-
   @Prop({ type: Number })
   cols: number;
+  @Prop({ type: Number })
+  colsMobile: number;
   @Prop({ type: String })
   isCentered: string;
   @Prop({ type: Boolean })

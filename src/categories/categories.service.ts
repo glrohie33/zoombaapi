@@ -39,12 +39,7 @@ export class CategoriesService {
     try {
       // createCategoryDto.image = file._id;
       const category = await this.categoryModel.create(createCategoryDto);
-      const file = await this.mediaService.uploadImage(
-        createCategoryDto.uploadedFile,
-        category._id,
-        'categories',
-      );
-      const post = await this.postService.createPost(
+      await this.postService.createPost(
         category.name,
         category.id,
         'categories',
@@ -96,9 +91,7 @@ export class CategoriesService {
   }
 
   findOne(id: string) {
-    return this.categoryModel
-      .findById(id)
-      .populate('attributes')
+    return this.categoryModel.findById(id).populate('attributes');
   }
 
   update(id: string, updateCategoryDto: UpdateCategoryDto) {
