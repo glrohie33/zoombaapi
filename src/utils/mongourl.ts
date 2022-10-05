@@ -4,7 +4,7 @@ if (env == 'development') {
   mongourl.url =
     'mongodb://zoomba1:Zoomba123@localhost/test-zoomba?authSource=admin';
 } else if (env == 'production') {
-  mongourl.url = 'mongodb://zoomba1:Zoomba123@localhost/test-live?authSource=admin';
+  mongourl.url = 'mongodb://zoomba1:Zoomba123@localhost/live-zoomba?authSource=admin';
 }
 
 export default mongourl;

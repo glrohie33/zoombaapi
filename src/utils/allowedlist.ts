@@ -12,6 +12,9 @@ if (enviroment == 'development') {
     'https://seller.zoomba.ng',
     'https://zoomba.ng',
     'https://kampe.zoomba.ng',
+    'http://seller.zoomba.ng',
+    'http://zoomba.ng',
+    'http://kampe.zoomba.ng',
   ];
 } else {
   domains = [
