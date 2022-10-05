@@ -87,6 +87,7 @@ export class UsersController extends BaseController {
 
     return this.success(res, { message: 'Shipping address updated' });
   }
+
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res: Response) {
     const { status, user, message } = await this.usersService.findOne(id);
@@ -103,7 +104,7 @@ export class UsersController extends BaseController {
     @Req() req: Request,
   ) {
     let userData: any = [];
-    console.log(req.user);
+
     if (req.user) {
       const userModel = req.user;
       const match: any = {};

@@ -139,7 +139,7 @@ export class UsersService {
       }
 
       user.defaultAddress = shipping;
-      await user.save();
+      await this.userModel.findByIdAndUpdate(user._id,{defaultAddress:shipping});
       response.status = true;
     } catch (e) {
       response.message = e.message;

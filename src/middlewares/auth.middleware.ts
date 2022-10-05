@@ -14,7 +14,7 @@ export class AuthMiddleware implements NestMiddleware {
   ) {}
   async use(req: any, res: any, next: () => void) {
     const token = req.cookies[COOKIE_NAME];
-    console.log(token);
+
     // const token = req.header.zoombaToken;
     const errCode = HttpStatus.UNAUTHORIZED;
     if (!token) {
