@@ -32,6 +32,8 @@ export class UsersService {
           throw new Error(`${referee} username not found in our database`);
         }
         createUserDto.referee = <string>(<unknown>ref._id);
+      } else {
+        createUserDto.referee = null;
       }
       const user = await this.userModel.create(createUserDto);
       const createWalletDto = new CreateWalletDto();
@@ -139,7 +141,9 @@ export class UsersService {
       }
 
       user.defaultAddress = shipping;
-      await this.userModel.findByIdAndUpdate(user._id,{defaultAddress:shipping});
+      await this.userModel.findByIdAndUpdate(user._id, {
+        defaultAddress: shipping,
+      });
       response.status = true;
     } catch (e) {
       response.message = e.message;

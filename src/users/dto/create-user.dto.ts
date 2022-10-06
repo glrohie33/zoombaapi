@@ -60,7 +60,7 @@ export class CreateUserDto {
   username: string;
 
   @ApiModelProperty({ type: String })
-  referee: string;
+  referee: string = null;
 
   newUser: User;
   status = false;
