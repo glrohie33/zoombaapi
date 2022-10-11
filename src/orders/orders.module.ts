@@ -13,8 +13,8 @@ import { OrderFactory } from './platformOrders/orderFactory';
 import { ZoombaOrder } from './platformOrders/impl/zoombaOrder';
 import { SubscriptionModule } from '../subscription/subscription.module';
 import { RepaymentsModule } from '../repayments/repayments.module';
-import {KampeOrder} from "./platformOrders/impl/kampeOrder";
-import {WalletModule} from "../wallet/wallet.module";
+import { KampeOrder } from './platformOrders/impl/kampeOrder';
+import { WalletModule } from '../wallet/wallet.module';
 
 @Module({
   imports: [
@@ -28,6 +28,13 @@ import {WalletModule} from "../wallet/wallet.module";
     WalletModule,
   ],
   controllers: [OrdersController],
-  providers: [OrdersService, GatewayFactory, OrderFactory, ZoombaOrder,KampeOrder],
+  providers: [
+    OrdersService,
+    GatewayFactory,
+    OrderFactory,
+    ZoombaOrder,
+    KampeOrder,
+  ],
+  exports: [OrdersService],
 })
 export class OrdersModule {}

@@ -49,8 +49,8 @@ export class OrdersService {
   }
 
   async findAll(params: OrderParamsDto) {
-    const { currentPage, perPage, search } = params;
-    const orderQuery = this.orderModel.find({}).regex('title', search);
+    const { currentPage, perPage, search, user } = params;
+    const orderQuery = this.orderModel.find({ user }).regex('title', search);
 
     const total = await orderQuery.clone().count();
 

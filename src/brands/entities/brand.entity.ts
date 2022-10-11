@@ -23,7 +23,7 @@ export class Brand {
   slug: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'stores' })
-  officialStore: Store;
+  officialStore: Store | string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'medias' })
   image: Media;

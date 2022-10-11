@@ -23,6 +23,7 @@ import { User } from './entities/user.entity';
 import { UserdataDto } from './dto/userdataDto';
 import { MetaService } from '../meta/meta.service';
 import { CreateMetaDto } from '../meta/dto/create-meta.dto';
+import { OrderParamsDto } from '../order-items/dto/order-params.dto';
 
 @Controller('users')
 export class UsersController extends BaseController {
@@ -68,8 +69,8 @@ export class UsersController extends BaseController {
   }
 
   @Get('orders')
-  async orders(@Res() res: Response) {
-    const orders = await this.usersService.getOrders();
+  async orders(@Res() res: Response, @Query() orderQuery: OrderParamsDto) {
+    const orders = await this.usersService.getOrders(orderQuery);
     return this.success(res, { orders });
   }
 

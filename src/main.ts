@@ -21,7 +21,7 @@ async function bootstrap() {
     },
     logger: WinstonModule.createLogger({
       transports: [
-        new winston.transports.File({ filename: 'error.log', level: 'error' }),
+        new winston.transports.File({ filename: 'error.log', level: 'debug' }),
         new winston.transports.File({ filename: 'combined.log' }),
       ],
     }),

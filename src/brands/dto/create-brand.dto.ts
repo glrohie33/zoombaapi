@@ -6,9 +6,18 @@ import {
 } from 'class-validator';
 import { Dto } from '../../extensions/dto';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
-import {BrandDocument} from '../entities/brand.entity';
+import { BrandDocument } from '../entities/brand.entity';
+import { Expose } from 'class-transformer';
 
 export class CreateBrandDto extends Dto {
+  @Expose()
+  get officialStore(): string {
+    return this._officialStore || null;
+  }
+
+  set officialStore(value: string) {
+    this._officialStore = value;
+  }
   constructor() {
     super();
   }
@@ -20,10 +29,10 @@ export class CreateBrandDto extends Dto {
 
   @ApiModelProperty({ type: String, format: 'binary' })
   image: any;
+
   @ApiModelProperty({ type: String })
   @IsString()
-  @IsMongoId()
-  officialStore: string;
+  private _officialStore: string = null;
 
   brand: BrandDocument;
   uploadedFile: Express.Multer.File;

@@ -12,12 +12,15 @@ import { REQUEST } from '@nestjs/core';
 import useRealTimers = jest.useRealTimers;
 import { CreateWalletDto } from '../wallet/dto/create-wallet.dto';
 import { WalletService } from '../wallet/wallet.service';
+import { OrderParamsDto } from '../order-items/dto/order-params.dto';
+import { OrdersService } from '../orders/orders.service';
 @Injectable()
 export class UsersService {
   constructor(
     @Inject(REQUEST) private request: Request,
     @InjectModel('users') private userModel: Model<UserDocument>,
     private walletService: WalletService,
+    private ordersService: OrdersService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<CreateUserDto> {
@@ -105,20 +108,12 @@ export class UsersService {
     return token;
   }
 
-  async getOrders() {
+  async getOrders(ordersQuery: OrderParamsDto) {
     const user = await this.request.user;
-    await user.populate('orders', [
-      'grandTotal',
-      'totalPrice',
-      'shippingPrice',
-      'paymentStatus',
-      'paymentGateway',
-      'orderItems',
-      'createdAt',
-    ]);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    return user.orders;
+    ordersQuery.user = user._id;
+    return await this.ordersService.findAll(ordersQuery);
   }
 
   async setDefaultShipping(shipping: string) {

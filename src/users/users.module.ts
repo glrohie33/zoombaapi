@@ -6,9 +6,10 @@ import {UserModel} from "./entities/user.entity";
 import {RoleModel} from "../roles/entities/role.entity";
 import {MetaModule} from "../meta/meta.module";
 import {WalletModule} from "../wallet/wallet.module";
+import {OrdersModule} from "../orders/orders.module";
 
 @Module({
-  imports:[MongooseModule.forFeature([UserModel,RoleModel]),MetaModule,WalletModule],
+  imports:[MongooseModule.forFeature([UserModel,RoleModel]),MetaModule,WalletModule,OrdersModule],
   controllers: [UsersController],
   providers: [UsersService],
   exports:[MongooseModule,UsersService]
