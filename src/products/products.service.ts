@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
@@ -10,7 +10,7 @@ import { ProductParams } from './dto/productParams';
 import { PostsService } from '../posts/posts.service';
 import * as Mongoose from 'mongoose';
 import { filterObject } from '../utils/config';
-import {BaseParams} from "../params/baseParams";
+import { BaseParams } from '../params/baseParams';
 
 @Injectable()
 export class ProductsService {
@@ -19,6 +19,7 @@ export class ProductsService {
     private mediaService: MediaService,
     private postService: PostsService,
     @InjectConnection() private connection: mongoose.Connection,
+    private logger: Logger,
   ) {}
   async create(createProductDto: CreateProductDto): Promise<CreateProductDto> {
     const session = await this.connection.startSession();
@@ -38,8 +39,9 @@ export class ProductsService {
       createProductDto.status = true;
       await session.commitTransaction();
     } catch (e) {
+      this.logger.log(e.message);
+
       await session.abortTransaction();
-      console.log(e.message);
       createProductDto.message = 'sorry your product cannot be created for now';
     } finally {
       await session.endSession();
@@ -48,7 +50,7 @@ export class ProductsService {
   }
 
   async findAll(params: ProductParams) {
-    const { price, brand, currentPage, perPage, categories} = params;
+    const { price, brand, currentPage, perPage, categories } = params;
     const allFilters = { price, brand, categories };
     const filters: any = filterObject(allFilters);
     console.log(filters);
@@ -96,6 +98,4 @@ export class ProductsService {
     const product = await this.findOne(query.postTypeId);
     return { productDetails: product, view: 'productView' };
   }
-
-
 }
