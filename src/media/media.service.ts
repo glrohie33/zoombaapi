@@ -97,4 +97,10 @@ export class MediaService {
     }
     return uploadedFiles;
   }
+
+  deleteImages(model: string, docModel: string, images: string[]) {
+    this.mediaModel
+      .deleteMany({ model, docModel, url: { $in: images } })
+      .then((r) => true);
+  }
 }

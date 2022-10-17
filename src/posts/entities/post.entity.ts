@@ -51,6 +51,9 @@ export class Post {
   slug: string;
   @Prop({ type: String, ref: 'platforms' })
   homePage: Platform | string;
+
+  @Prop({ type: String })
+  textContent: string;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

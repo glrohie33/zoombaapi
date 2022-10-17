@@ -99,6 +99,9 @@ export class Product {
     slug_padding_size: 1,
   })
   slug: string;
+
+  @Prop({ type: String })
+  modelNumber: string;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

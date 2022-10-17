@@ -70,9 +70,32 @@ export class ProductsController extends BaseController {
     return this.success(res, { product });
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(+id, updateProductDto);
+  @Post(':id')
+  @UseInterceptors(
+    FilesInterceptor('images[]', 6, {
+      storage: uploadFileHelper('uploads/products'),
+      preservePath: true,
+    }),
+  )
+  async update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    updateProductDto.userDocument = req.user;
+    updateProductDto.user = req.user._id;
+    updateProductDto.uploadedFiles = files;
+    const { status, message, product } = await this.productsService.update(
+      id,
+      updateProductDto,
+    );
+    if (!status) {
+      return this.error(res, { message: message });
+    }
+
+    return this.success(res, { product });
   }
 
   @Delete(':id')

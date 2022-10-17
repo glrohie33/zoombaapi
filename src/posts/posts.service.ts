@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
@@ -11,6 +11,7 @@ export class PostsService {
   constructor(
     @InjectModel('posts') private postModel: Model<PostDocument>,
     @InjectConnection() private connection: mongoose.Connection,
+    private logger: Logger,
   ) {}
 
   async create(createPostDto: CreatePostDto): Promise<CreatePostDto> {
@@ -25,7 +26,7 @@ export class PostsService {
       createPostDto.status = true;
       await session.commitTransaction();
     } catch (e) {
-      console.log(e);
+      this.logger.log(e.message);
       createPostDto.message = ['there is an error creating post'];
       await session.abortTransaction();
     } finally {

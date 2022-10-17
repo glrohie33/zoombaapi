@@ -40,7 +40,6 @@ export class ProductsService {
       await session.commitTransaction();
     } catch (e) {
       this.logger.log(e.message);
-
       await session.abortTransaction();
       createProductDto.message = 'sorry your product cannot be created for now';
     } finally {
@@ -86,8 +85,43 @@ export class ProductsService {
       .populate('productImages');
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    const session = await this.connection.startSession();
+    await session.startTransaction();
+    const { deletedImages } = updateProductDto;
+    try {
+      const product = await this.productModel.findByIdAndUpdate(
+        updateProductDto,
+      );
+      if (updateProductDto.uploadedFiles.length > 0) {
+        const files = await this.mediaService.uploadFiles(
+          updateProductDto.uploadedFiles,
+          product.id,
+          'products',
+        );
+        if (deletedImages.includes(product.mainImage)) {
+          product.mainImage = files[0].url;
+          product.save();
+        }
+      }
+
+      if (deletedImages.length > 0) {
+        this.mediaService.deleteImages(product.id, 'products', deletedImages);
+      }
+
+
+
+      updateProductDto.product = product;
+      updateProductDto.status = true;
+      await session.commitTransaction();
+    } catch (e) {
+      this.logger.log(e.message);
+      await session.abortTransaction();
+      updateProductDto.message = 'sorry your product cannot be created for now';
+    } finally {
+      await session.endSession();
+    }
+    return updateProductDto;
   }
 
   remove(id: number) {
