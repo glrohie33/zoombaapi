@@ -36,4 +36,10 @@ PlatformSchema.virtual('image', {
   foreignField: 'model',
 });
 
+PlatformSchema.virtual('homepage', {
+  ref: 'posts',
+  localField: 'key',
+  foreignField: 'homePage',
+});
+
 export const PlatformModel = { name: 'platforms', schema: PlatformSchema };

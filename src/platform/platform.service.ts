@@ -40,7 +40,9 @@ export class PlatformService {
   async findAll() {
     let platforms: PlatformDocument[] = [];
     try {
-      platforms = await this.platformModel.find();
+      platforms = await this.platformModel
+        .find()
+        .populate('homepage', ['id', 'slug']);
     } catch (e) {
       console.log(e.message);
     }

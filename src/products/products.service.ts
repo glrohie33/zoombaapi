@@ -55,10 +55,10 @@ export class ProductsService {
     console.log(filters);
     let products: any = [];
     let total = 0;
-    // const { getFilters, filterBy } = params;
-    // if (getFilters) {
-    //   filters[filterBy] = getFilters;
-    // }
+    const { getFilters, filterBy } = params;
+    if (getFilters) {
+      filters[filterBy] = getFilters;
+    }
 
     // products = await this.productModel.find()
     products = await this.productModel
