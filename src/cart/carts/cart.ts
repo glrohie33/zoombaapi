@@ -72,11 +72,7 @@ export abstract class Cart {
   }
 
   saveCart(cartDto, res) {
-    res.cookie(this.cartType, cartDto.cart, {
-      expires: COOKIE_EXPIRE,
-      httpOnly: true,
-      secure: false,
-    });
+    res.cookie(this.cartType, cartDto.cart);
   }
 
   insertItem(cartDto: CartDto) {

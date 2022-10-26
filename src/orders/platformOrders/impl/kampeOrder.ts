@@ -27,7 +27,7 @@ import { WalletService } from '../../../wallet/wallet.service';
 @Injectable()
 export class KampeOrder extends Order {
   protected readonly downPercent: number = 25;
-  protected readonly handlingFee:number = 700;
+  protected readonly handlingFee:number = 750;
   constructor(
     protected shippingService: ShippingService,
     protected metaService: MetaService,
