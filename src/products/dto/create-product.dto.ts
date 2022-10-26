@@ -2,6 +2,7 @@ import {
   isArray,
   IsMongoId,
   IsNotEmpty,
+  IsNumber,
   IsString,
   MinLength,
 } from 'class-validator';
@@ -10,22 +11,24 @@ import { Dto } from '../../extensions/dto';
 import { Product, ProductDocument } from '../entities/product.entity';
 import { Brand } from '../../brands/entities/brand.entity';
 import { ApiProperty } from '@nestjs/swagger';
-import {Expose} from "class-transformer";
+import { Expose } from 'class-transformer';
 
 export class CreateProductDto extends Dto {
   constructor() {
     super();
   }
-
   productPurchasePrice: number;
   productWeight: number;
-  productVat: number;
-  productVariations = '[]';
-  productAttributes = '{}';
-  salesPrice = 0;
-  productQuantity: number;
 
-  @ApiModelProperty({ type: String })
+  productVat: number;
+
+  productVariations = '[]';
+
+  productAttributes = '{}';
+
+  salesPrice = 0;
+
+  productQuantity: number;
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -80,15 +83,21 @@ export class CreateProductDto extends Dto {
     return <number>this.productVat;
   }
 
+  set vat(value: number) {}
+
   @Expose()
   get purchasePrice(): number {
     return <number>this.productPurchasePrice;
   }
 
+  set purchasePrice(value: number) {}
+
   @Expose()
   get variations(): any {
     return JSON.parse(this.productVariations);
   }
+
+  set variations(value: any) {}
 
   @Expose()
   get attributes(): any {
@@ -96,10 +105,14 @@ export class CreateProductDto extends Dto {
     return attributes;
   }
 
+  set attributes(value: any) {}
+
   @Expose()
   get weight(): number {
     return <number>this.productWeight;
   }
+
+  set weight(value: number) {}
 
   @Expose()
   get price(): number {
@@ -108,17 +121,23 @@ export class CreateProductDto extends Dto {
     return purchasePrice + interest;
   }
 
+  set price(price: number) {}
+
   @Expose()
   get quantity(): number {
     return this.productQuantity;
   }
 
+  set quantity(value: number) {}
+
   @Expose()
-  get discount():number{
+  get discount(): number {
     const diff = this.purchasePrice - this.salesPrice;
     const discount = this.salesPrice / this.purchasePrice;
     return discount * 100;
   }
+
+  set discount(value: number) {}
 
   mainImage: string;
 

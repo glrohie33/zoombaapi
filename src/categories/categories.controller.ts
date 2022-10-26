@@ -69,8 +69,9 @@ export class CategoriesController extends BaseController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(id);
+  async findOne(@Param('id') id: string, @Res() res: Response) {
+    const category = await this.categoriesService.findOne(id);
+    this.success(res, { category });
   }
 
   @Patch(':id')

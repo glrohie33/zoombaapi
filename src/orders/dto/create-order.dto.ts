@@ -41,5 +41,6 @@ export class CreateOrderDto extends Dto {
   user: string;
   downPayment: number;
   subscriptionPeriod:number;
+  handlingFee:number;
 
 }

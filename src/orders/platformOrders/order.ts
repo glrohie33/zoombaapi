@@ -13,7 +13,7 @@ import { v5 as uuidv5 } from 'uuid';
 import { Request } from '../../utils/config';
 import { OrderDocument } from '../entities/order.entity';
 import { Model } from 'mongoose';
-import {WalletDocument} from "../../wallet/entities/wallet.entity";
+import { WalletDocument } from '../../wallet/entities/wallet.entity';
 
 export abstract class Order {
   protected abstract gatewayFactory: GatewayFactory;
@@ -25,6 +25,7 @@ export abstract class Order {
   protected abstract req: Request;
   protected abstract orderModel: Model<OrderDocument>;
   protected abstract readonly downPercent: number;
+  protected abstract readonly handlingFee: number;
   generatePaymentRef(createOrderDto: CreateOrderDto) {
     return this.gatewayFactory
       .getInstance(createOrderDto.paymentGateway)
@@ -104,9 +105,10 @@ export abstract class Order {
       const shippingPrice = await this.getShippingPrice(createOrderDto);
       const totalPrice = createOrderDto.cart.sumTotal * subscriptionPeriod;
       createOrderDto.shippingPrice = shippingPrice * subscriptionPeriod;
+      createOrderDto.handlingFee = this.handlingFee * subscriptionPeriod;
       createOrderDto.totalPrice = totalPrice;
       createOrderDto.grandTotal =
-        createOrderDto.totalPrice + createOrderDto.shippingPrice;
+        createOrderDto.totalPrice + createOrderDto.shippingPrice + createOrderDto.handlingFee;
       createOrderDto.orderItems = createOrderDto.cart.cart;
       createOrderDto.downPayment =
         createOrderDto.grandTotal * (this.downPercent / 100);

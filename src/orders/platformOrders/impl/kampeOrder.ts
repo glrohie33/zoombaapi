@@ -27,6 +27,7 @@ import { WalletService } from '../../../wallet/wallet.service';
 @Injectable()
 export class KampeOrder extends Order {
   protected readonly downPercent: number = 25;
+  protected readonly handlingFee:number = 700;
   constructor(
     protected shippingService: ShippingService,
     protected metaService: MetaService,
@@ -50,6 +51,17 @@ export class KampeOrder extends Order {
     }
 
     await this.insertOrder(createOrderDto);
+  }
+
+  async getShippingPrice(createOrderDto: CreateOrderDto) {
+    let fee = 1500;
+    const {
+      cart: { sumTotal },
+    } = createOrderDto;
+    if (sumTotal > 50000) {
+      fee = 2000;
+    }
+    return fee;
   }
 
   async finishOrder(verifyOrderDto: VerifyOrderDto) {

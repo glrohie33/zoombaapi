@@ -89,8 +89,10 @@ export class ProductsService {
     const session = await this.connection.startSession();
     await session.startTransaction();
     const { deletedImages } = updateProductDto;
+    console.log(updateProductDto.purchasePrice);
     try {
       const product = await this.productModel.findByIdAndUpdate(
+        updateProductDto.id,
         updateProductDto,
       );
       if (updateProductDto.uploadedFiles.length > 0) {
@@ -108,8 +110,6 @@ export class ProductsService {
       if (deletedImages.length > 0) {
         this.mediaService.deleteImages(product.id, 'products', deletedImages);
       }
-
-
 
       updateProductDto.product = product;
       updateProductDto.status = true;

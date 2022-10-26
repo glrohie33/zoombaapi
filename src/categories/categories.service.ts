@@ -126,7 +126,6 @@ export class CategoriesService {
 
   getTopCategories() {
     const platform = this.req.headers['platform'];
-
     return this.categoryModel.find({
       topCategory: true,
       platforms: { $elemMatch: { $eq: platform } },
