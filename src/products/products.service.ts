@@ -69,7 +69,7 @@ export class ProductsService {
       .regex('name', search)
       .limit(perPage);
 
-    total = await this.productModel.find(filters).count();
+    total = await this.productModel.find(filters).regex('name', search).count();
     // if(filters){
     //  await products.where(filters);
     // }
