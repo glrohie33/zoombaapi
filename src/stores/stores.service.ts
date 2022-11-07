@@ -6,7 +6,7 @@ import { Store } from './entities/store.entity';
 import { Model } from 'mongoose';
 import { VerifyDto } from './dto/verify-dto';
 import * as mongoose from 'mongoose';
-import {BaseParams} from "../params/baseParams";
+import { BaseParams } from '../params/baseParams';
 
 @Injectable()
 export class StoresService {
@@ -23,7 +23,7 @@ export class StoresService {
       await store.populate('user', ['firstname', 'lastname', 'email']);
       if (createStoreDto.userModel.role == 'user') {
         createStoreDto.userModel.role = 'vendor';
-        await createStoreDto.userModel.save();
+        await createStoreDto.userModel.update({ $set: { role: 'vendor' } });
       }
       createStoreDto.store = store;
       createStoreDto.status = true;

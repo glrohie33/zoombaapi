@@ -12,7 +12,7 @@ import { AppService } from './app.service';
 import { Request } from './utils/config';
 import { Response } from 'express';
 import { BaseController } from './base-controller';
-import { ApiParam } from '@nestjs/swagger';
+import {ApiParam, ApiQuery} from '@nestjs/swagger';
 import { BaseParams } from './params/baseParams';
 import { platform } from 'os';
 import { STATUS_CODES } from 'http';
@@ -44,7 +44,7 @@ export class AppController extends BaseController {
     data.view = 'home';
     return res.status(200).json(data);
   }
-
+  @ApiQuery({ name: 'search', required: false })
   @Get('/page/products')
   async getProducts(@Req() req: Request, @Res() res: Response) {
     const post = await this.appService.getProducts();

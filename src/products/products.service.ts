@@ -24,7 +24,7 @@ export class ProductsService {
   async create(createProductDto: CreateProductDto): Promise<CreateProductDto> {
     const session = await this.connection.startSession();
     await session.startTransaction();
-
+    console.log('here');
     try {
       const product = await this.productModel.create(createProductDto);
       const files = await this.mediaService.uploadFiles(
@@ -49,7 +49,7 @@ export class ProductsService {
   }
 
   async findAll(params: ProductParams) {
-    const { price, brand, currentPage, perPage, categories } = params;
+    const { price, brand, currentPage, perPage, categories, search } = params;
     const allFilters = { price, brand, categories };
     const filters: any = filterObject(allFilters);
     console.log(filters);
@@ -66,6 +66,7 @@ export class ProductsService {
       .populate('categories', ['name'])
       .populate('brand', ['name'])
       .skip(perPage * (currentPage - 1))
+      .regex('name', search)
       .limit(perPage);
 
     total = await this.productModel.find(filters).count();

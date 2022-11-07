@@ -17,18 +17,23 @@ export class CreateProductDto extends Dto {
   constructor() {
     super();
   }
+  @ApiModelProperty({type:String})
   productPurchasePrice: number;
+  @ApiModelProperty({type:String})
   productWeight: number;
-
+  @ApiModelProperty({type:String})
   productVat: number;
-
+  @ApiModelProperty({type:String,required:false})
   productVariations = '[]';
-
+  @ApiModelProperty({type:String,required:false})
   productAttributes = '{}';
 
+  @ApiModelProperty({type:String})
   salesPrice = 0;
-
+  @ApiModelProperty({type:String})
   productQuantity: number;
+
+  @ApiModelProperty({type:String})
   @IsNotEmpty()
   @IsString()
   name: string;
