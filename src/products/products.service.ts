@@ -61,15 +61,16 @@ export class ProductsService {
     }
 
     // products = await this.productModel.find()
+    const reg = new RegExp(search, 'i');
     products = await this.productModel
       .find(filters)
       .populate('categories', ['name'])
       .populate('brand', ['name'])
+      .regex('name', reg)
       .skip(perPage * (currentPage - 1))
-      .regex('name', search)
       .limit(perPage);
 
-    total = await this.productModel.find(filters).regex('name', search).count();
+    total = await this.productModel.find(filters).regex('name', reg).count();
     // if(filters){
     //  await products.where(filters);
     // }
