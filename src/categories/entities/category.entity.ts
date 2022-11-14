@@ -28,17 +28,26 @@ export class Category {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'categories',
+    set: (v) => v || null,
     default: null,
   })
   parent: this;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'medias' })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    set: (v) => v || null,
+    ref: 'medias',
+  })
   image: Media;
 
   @Prop({ type: String, required: true })
   title: string;
 
-  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'attributes' })
+  @Prop({
+    type: [mongoose.Schema.Types.ObjectId],
+    set: (v) => v || null,
+    ref: 'attributes',
+  })
   attributes: Attribute[];
 
   @Prop({ type: [String], required: true })

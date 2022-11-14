@@ -103,4 +103,8 @@ export class MediaService {
       .deleteMany({ model, docModel, url: { $in: images } })
       .then((r) => true);
   }
+
+  findImageWithField(field = '_id', value: string) {
+    return this.mediaModel.findOne({ [field]: value });
+  }
 }

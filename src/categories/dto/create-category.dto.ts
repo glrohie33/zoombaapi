@@ -15,40 +15,35 @@ export class CreateCategoryDto extends Dto {
   @IsString()
   name: string;
 
-  @ApiModelProperty({ type: String, required: false })
-  private _parent: any = null;
+  @ApiModelProperty({ type: String, required: false, default: null })
+  parent: string;
 
   @ApiModelProperty({ type: String })
   @IsNotEmpty()
   @IsString()
   title: string;
 
-  @ApiModelProperty({ type: [String] })
+  @ApiModelProperty({ type: [String],required:false })
   // @IsNotEmpty()
   // @IsArray()
   attributes: ObjectId[];
-  @ApiModelProperty({ type: String, format: 'binary' })
+  @ApiModelProperty({ type: String, format: 'binary', required: false })
   image: any;
-  @ApiModelProperty({ type: [String] })
+  @ApiModelProperty({ type: [String], required: false })
   // @IsNotEmpty()
   // @IsArray()
   tags: string[];
   uploadedFile: Express.Multer.File;
-  @ApiModelProperty({ type: [String] })
+  @ApiModelProperty({ type: [String], required: false })
   platform: string[];
   status = false;
   errorMessage: string | string[];
-  private _topCategory = false;
+
+  @ApiModelProperty({ type: Boolean, default: false,required:false })
+  private topCategory;
+
   category: Category;
   private _media: Media;
-  @Expose()
-  get parent() {
-    return this._parent || null;
-  }
-
-  set parent(value: any) {
-    this._parent = value;
-  }
 
   get media(): Media {
     return this._media;
@@ -56,15 +51,5 @@ export class CreateCategoryDto extends Dto {
 
   set media(value: Media) {
     this._media = value;
-  }
-
-  @Expose()
-  @ApiModelProperty({ type: Boolean })
-  get topCategory(): boolean {
-    return this._topCategory;
-  }
-
-  set topCategory(value: boolean) {
-    this._topCategory = value;
   }
 }

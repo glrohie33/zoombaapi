@@ -17,23 +17,23 @@ export class CreateProductDto extends Dto {
   constructor() {
     super();
   }
-  @ApiModelProperty({type:String})
-  productPurchasePrice: number;
-  @ApiModelProperty({type:String})
-  productWeight: number;
-  @ApiModelProperty({type:String})
-  productVat: number;
-  @ApiModelProperty({type:String,required:false})
-  productVariations = '[]';
-  @ApiModelProperty({type:String,required:false})
-  productAttributes = '{}';
+  @ApiModelProperty({ type: String })
+  purchasePrice: number;
+  @ApiModelProperty({ type: String })
+  weight: number;
+  @ApiModelProperty({ type: String })
+  vat: number;
+  @ApiModelProperty({ type: String, required: false })
+  variations = '[]';
+  @ApiModelProperty({ type: String, required: false })
+  attributes = '{}';
 
-  @ApiModelProperty({type:String})
+  @ApiModelProperty({ type: String })
   salesPrice = 0;
-  @ApiModelProperty({type:String})
-  productQuantity: number;
+  @ApiModelProperty({ type: String })
+  quantity: number;
 
-  @ApiModelProperty({type:String})
+  @ApiModelProperty({ type: String })
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -84,42 +84,6 @@ export class CreateProductDto extends Dto {
   product: ProductDocument;
 
   @Expose()
-  get vat(): number {
-    return <number>this.productVat;
-  }
-
-  set vat(value: number) {}
-
-  @Expose()
-  get purchasePrice(): number {
-    return <number>this.productPurchasePrice;
-  }
-
-  set purchasePrice(value: number) {}
-
-  @Expose()
-  get variations(): any {
-    return JSON.parse(this.productVariations);
-  }
-
-  set variations(value: any) {}
-
-  @Expose()
-  get attributes(): any {
-    const attributes = JSON.parse(this.productAttributes);
-    return attributes;
-  }
-
-  set attributes(value: any) {}
-
-  @Expose()
-  get weight(): number {
-    return <number>this.productWeight;
-  }
-
-  set weight(value: number) {}
-
-  @Expose()
   get price(): number {
     const purchasePrice = this.purchasePrice - this.salesPrice;
     const interest = purchasePrice * (10 / 100);
@@ -127,22 +91,6 @@ export class CreateProductDto extends Dto {
   }
 
   set price(price: number) {}
-
-  @Expose()
-  get quantity(): number {
-    return this.productQuantity;
-  }
-
-  set quantity(value: number) {}
-
-  @Expose()
-  get discount(): number {
-    const diff = this.purchasePrice - this.salesPrice;
-    const discount = this.salesPrice / this.purchasePrice;
-    return discount * 100;
-  }
-
-  set discount(value: number) {}
 
   mainImage: string;
 

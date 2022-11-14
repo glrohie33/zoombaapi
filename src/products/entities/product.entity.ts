@@ -52,7 +52,7 @@ export class Product {
   @Prop({ type: Number, set: (v) => toFloat(v, 2), required: true })
   weight: number;
 
-  @Prop({ type: Number, set: (v) => toFloat(v, 2), default: 0 })
+  @Prop({ type: Number, set: (v) => toFloat(Number(v), 2), default: 0 })
   vat: number;
 
   @Prop({ type: Number, set: (v) => toFloat(v, 2), default: 0 })
@@ -61,7 +61,7 @@ export class Product {
   @Prop({ type: String, enum: ['percentage', 'price'] })
   discountType: string;
 
-  @Prop({ type: [] })
+  @Prop({ type: [], set: (v) => (v ? JSON.parse(v) : []) })
   variations: any[];
 
   @Prop({ type: String, required: true, min: 30 })
@@ -70,7 +70,7 @@ export class Product {
   @Prop({ type: String, required: true, min: 30 })
   features: string;
 
-  @Prop({ type: [String], required: true })
+  @Prop({ type: [String], set: (v) => v.split(','), required: true })
   tags: string[];
 
   @Prop({ type: String })
@@ -85,7 +85,7 @@ export class Product {
   @Prop({ type: String, ref: 'platforms' })
   platform: Platform;
 
-  @Prop({ type: {} })
+  @Prop({ type: {}, set: (v) => (v ? JSON.parse(v) : {}) })
   attributes: any;
 
   @Prop({ type: Number, default: 0 })

@@ -23,14 +23,13 @@ export class StoresService {
       await store.populate('user', ['firstname', 'lastname', 'email']);
       if (createStoreDto.userModel.role == 'user') {
         createStoreDto.userModel.role = 'vendor';
-        await createStoreDto.userModel.update({ $set: { role: 'vendor' } });
+        await createStoreDto.userModel.updateOne({ $set: { role: 'vendor' } });
       }
       createStoreDto.store = store;
       createStoreDto.status = true;
       await session.commitTransaction();
     } catch (e) {
       await session.abortTransaction();
-      console.log(e.message);
       createStoreDto.message = ['there is an error creating store'];
     } finally {
       await session.endSession();

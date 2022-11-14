@@ -90,30 +90,10 @@ export class ProductsService {
   async update(id: string, updateProductDto: UpdateProductDto) {
     const session = await this.connection.startSession();
     await session.startTransaction();
-    const { deletedImages } = updateProductDto;
-    console.log(updateProductDto.purchasePrice);
     try {
-      const product = await this.productModel.findByIdAndUpdate(
-        updateProductDto.id,
-        updateProductDto,
-      );
-      if (updateProductDto.uploadedFiles.length > 0) {
-        const files = await this.mediaService.uploadFiles(
-          updateProductDto.uploadedFiles,
-          product.id,
-          'products',
-        );
-        if (deletedImages.includes(product.mainImage)) {
-          product.mainImage = files[0].url;
-          product.save();
-        }
-      }
-
-      if (deletedImages.length > 0) {
-        this.mediaService.deleteImages(product.id, 'products', deletedImages);
-      }
-
-      updateProductDto.product = product;
+      await this.updateProduct(updateProductDto);
+      await this.uploadNewProducts(updateProductDto);
+      this.removeDeletedImages(updateProductDto);
       updateProductDto.status = true;
       await session.commitTransaction();
     } catch (e) {
@@ -124,6 +104,45 @@ export class ProductsService {
       await session.endSession();
     }
     return updateProductDto;
+  }
+
+  async updateProduct(updateProductDto: UpdateProductDto) {
+    const product = await this.productModel.findByIdAndUpdate(
+      updateProductDto.id,
+      updateProductDto,
+    );
+    updateProductDto.product = product;
+  }
+
+  async uploadNewProducts(updateProductDto: UpdateProductDto) {
+    if (updateProductDto.uploadedFiles.length > 0) {
+      const files = await this.mediaService.uploadFiles(
+        updateProductDto.uploadedFiles,
+        updateProductDto.product.id,
+        'products',
+      );
+
+      const mainImageExist = await this.mediaService.findImageWithField(
+        'url',
+        updateProductDto.product.mainImage,
+      );
+      if (
+        !mainImageExist ||
+        updateProductDto.deletedImages.includes(
+          updateProductDto.product.mainImage,
+        )
+      ) {
+        await updateProductDto.product.updateOne({
+          $set: { mainImage: files[0].url },
+        });
+      }
+    }
+  }
+
+  removeDeletedImages({ product, deletedImages }: UpdateProductDto) {
+    if (deletedImages.length > 0) {
+      this.mediaService.deleteImages(product.id, 'products', deletedImages);
+    }
   }
 
   remove(id: number) {
