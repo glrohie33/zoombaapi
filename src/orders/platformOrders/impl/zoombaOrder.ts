@@ -18,7 +18,7 @@ import { OrderItemsService } from '../../../order-items/order-items.service';
 @Injectable()
 export class ZoombaOrder extends Order {
   protected readonly downPercent: number = 100;
-  protected readonly handlingFee: number;
+  protected readonly handlingFee: number=0;
   constructor(
     protected shippingService: ShippingService,
     protected metaService: MetaService,

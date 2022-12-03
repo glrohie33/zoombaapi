@@ -59,11 +59,34 @@ import mongourl from './utils/mongourl';
 import { CartFactory } from './cart/cartFactory';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { RepaymentsModule } from './repayments/repayments.module';
+import { FinanceRequestsModule } from './finance-requests/finance-requests.module';
+import { RequestsModule } from './requests/requests.module';
+import { MailServiceService } from './mail-service/mail-service.service';
+import { RaveService } from './orders/rave/rave.service';
+import { RequestsService } from './requests/requests.service';
+import { UnitedCapitalService } from './orders/united-capital/united-capital.service';
+import { RequestModel } from './requests/entities/request.entity';
+import { RequestsController } from './requests/requests.controller';
+import {MailerModule} from "@nestjs-modules/mailer";
+import {HandlebarsAdapter} from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 @Global()
 @Module({
   imports: [
     HttpModule,
     MongooseModule.forRoot(mongourl.url),
+    MailerModule.forRoot({
+      transport: 'smtps://user@domain.com:pass@smtp.domain.com',
+      defaults: {
+        from: '"nest-modules" <modules@nestjs.com>',
+      },
+      template: {
+        dir: __dirname + '/templates',
+        adapter: new HandlebarsAdapter(),
+        options: {
+          strict: true,
+        },
+      },
+    }),
     MongooseModule.forFeature([
       PermissionModel,
       RoleModel,
@@ -71,6 +94,7 @@ import { RepaymentsModule } from './repayments/repayments.module';
       BrandModel,
       CategoryModel,
       StoreModel,
+      RequestModel,
     ]),
     UsersModule,
     RolesModule,
@@ -104,6 +128,8 @@ import { RepaymentsModule } from './repayments/repayments.module';
     PaymentOptionsModule,
     SubscriptionModule,
     RepaymentsModule,
+    FinanceRequestsModule,
+    RequestsModule,
   ],
   controllers: [AppController, CartController, AuthController],
   providers: [
@@ -113,8 +139,12 @@ import { RepaymentsModule } from './repayments/repayments.module';
     CartFactoryService,
     CartFactory,
     Logger,
+    MailServiceService,
+    RaveService,
+    UnitedCapitalService,
+    RequestsService,
   ],
-  exports:[Logger]
+  exports: [Logger, RaveService, UnitedCapitalService, RequestsService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
@@ -137,6 +167,7 @@ export class AppModule implements NestModule {
         ProductsController,
         MediaController,
         OrdersController,
+        RequestsController,
       );
   }
 }

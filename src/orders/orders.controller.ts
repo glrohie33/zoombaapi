@@ -21,6 +21,7 @@ import { VerifyOrderDto } from './dto/verfy-order.dto';
 import { VerifyDto } from 'src/stores/dto/verify-dto';
 import { ApiParam } from '@nestjs/swagger';
 import { OrderParamsDto } from '../order-items/dto/order-params.dto';
+import { FinanceOrderDto } from './dto/finance-order.dto';
 
 @Controller('orders')
 export class OrdersController extends BaseController {
@@ -46,17 +47,11 @@ export class OrdersController extends BaseController {
     return this.success(res, { total, orders });
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string, @Res() res: Response) {
-    let order: OrderDocument;
+  @Get('/:id')
+  async findOne(){
 
-    order = await this.ordersService.findOne(id);
-
-    if (!order) {
-      return this.error(res, { message: 'order does not exist' });
-    }
-    return this.success(res, { order });
   }
+
 
   @Post('/verifyOrder/:id')
   @ApiParam({ name: 'id' })

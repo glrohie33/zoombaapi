@@ -21,6 +21,7 @@ if (enviroment == 'development') {
     'http://localhost:4000',
     'http://localhost:5000',
     'http://localhost:5454',
+    'http://localhost:8080',
   ];
 }
 

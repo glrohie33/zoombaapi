@@ -74,7 +74,7 @@ export class CategoriesController extends BaseController {
     this.success(res, { category });
   }
 
-  @Post(':id')
+  @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,

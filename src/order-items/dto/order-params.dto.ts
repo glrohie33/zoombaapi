@@ -8,4 +8,7 @@ export class OrderParamsDto extends BaseParams {
   }
   total: number;
   orders: any;
+  paymentStatus:string;
+  paymentGateway:string;
+
 }

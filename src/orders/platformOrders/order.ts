@@ -95,6 +95,7 @@ export abstract class Order {
     const transaction = await session.startTransaction();
     try {
       const cartDto = new CartDto();
+
       const subscriptionPeriod =
         createOrderDto.subscriptionPeriod == 0
           ? 1
@@ -104,11 +105,14 @@ export abstract class Order {
       await this.getShippingAddress(createOrderDto);
       const shippingPrice = await this.getShippingPrice(createOrderDto);
       const totalPrice = createOrderDto.cart.sumTotal * subscriptionPeriod;
+      console.log(totalPrice);
+
       createOrderDto.shippingPrice = shippingPrice * subscriptionPeriod;
       createOrderDto.handlingFee = this.handlingFee * subscriptionPeriod;
       createOrderDto.totalPrice = totalPrice;
       createOrderDto.grandTotal =
         createOrderDto.totalPrice + createOrderDto.shippingPrice + createOrderDto.handlingFee;
+      console.log(this.handlingFee);
       createOrderDto.orderItems = createOrderDto.cart.cart;
       createOrderDto.downPayment =
         createOrderDto.grandTotal * (this.downPercent / 100);
@@ -123,7 +127,7 @@ export abstract class Order {
       createOrderDto.status = true;
     } catch (e) {
       await session.abortTransaction();
-      console.log(e);
+      console.log(e.message);
       createOrderDto.message = e.message;
     } finally {
       await session.endSession();

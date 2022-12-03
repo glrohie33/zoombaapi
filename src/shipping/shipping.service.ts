@@ -88,7 +88,7 @@ export class ShippingService {
     };
 
     try {
-      console.log(url);
+      console.log(token);
       const data = await this.httpService
         .get(url, {
           headers: {

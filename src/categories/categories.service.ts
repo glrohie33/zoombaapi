@@ -108,7 +108,6 @@ export class CategoriesService {
     const product = await this.productService.findAll(param);
 
     const mainCategory = await this.findOne(param.postTypeId);
-    console.log(mainCategory);
     const attributes = mainCategory?.attributes;
     const categoryParam = new CategoryParams();
     categoryParam.parent = param.postTypeId;

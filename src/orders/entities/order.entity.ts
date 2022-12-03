@@ -53,10 +53,19 @@ export class Order {
   orderItems: any[];
   @Prop({ type: Number, default: null })
   subscriptionPeriod: number;
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref:'subscriptions', default: null })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'subscriptions',
+    default: null,
+  })
   subscription: Subscription;
 }
 
 const OrderSchema = SchemaFactory.createForClass(Order);
 
+OrderSchema.virtual('requests', {
+  ref: 'requests',
+  localField: '_id',
+  foreignField: 'modelId',
+});
 export const OrderModel = { name: 'orders', schema: OrderSchema };

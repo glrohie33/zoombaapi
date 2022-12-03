@@ -31,14 +31,16 @@ export class RaveService implements PaymentGateway {
       const resp = await this.instance.Transaction.verify({
         id: verifyOrderDto.data.transactionId,
       });
-      console.log(resp);
       if (resp.data.status === 'successful') {
         verifyOrderDto.status = true;
       }
     } catch (e) {
-      console.log(e.message);
       verifyOrderDto.message = ['error verifying order'];
     }
     return verifyOrderDto;
+  }
+
+  postOrderAction(data: VerifyOrderDto) {
+    return true;
   }
 }

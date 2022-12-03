@@ -7,12 +7,10 @@ import {
 } from 'class-validator';
 import { ApiModelProperty } from '@nestjs/swagger/dist/decorators/api-model-property.decorator';
 import { IsMatch, IsUnique } from '../../utils/customValidators';
-import { User } from '../entities/user.entity';
-import {InjectModel} from "@nestjs/mongoose";
+import {User, UserDocument} from '../entities/user.entity';
+import { InjectModel } from '@nestjs/mongoose';
 
 export class CreateUserDto {
-
-
   @ApiModelProperty({ type: String })
   @IsNotEmpty()
   @IsString()
@@ -62,8 +60,9 @@ export class CreateUserDto {
   @ApiModelProperty({ type: String })
   referee: string = null;
 
-  newUser: User;
+  newUser: UserDocument;
   status = false;
   errorMessage: string[] = [];
   token: string;
+  role = 'user';
 }

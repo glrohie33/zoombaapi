@@ -15,6 +15,7 @@ import { SubscriptionModule } from '../subscription/subscription.module';
 import { RepaymentsModule } from '../repayments/repayments.module';
 import { KampeOrder } from './platformOrders/impl/kampeOrder';
 import { WalletModule } from '../wallet/wallet.module';
+import { UnitedCapitalService } from './united-capital/united-capital.service';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { WalletModule } from '../wallet/wallet.module';
     OrderFactory,
     ZoombaOrder,
     KampeOrder,
+    UnitedCapitalService,
   ],
   exports: [OrdersService],
 })

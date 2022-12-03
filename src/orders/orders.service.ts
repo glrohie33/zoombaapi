@@ -22,6 +22,8 @@ import { OrderItemsService } from 'src/order-items/order-items.service';
 import { ProductDocument } from 'src/products/entities/product.entity';
 import { OrderParamsDto } from '../order-items/dto/order-params.dto';
 import { OrderFactory } from './platformOrders/orderFactory';
+import { FinanceOrderDto } from './dto/finance-order.dto';
+import { UserDocument } from '../users/entities/user.entity';
 
 @Injectable()
 export class OrdersService {
@@ -49,8 +51,18 @@ export class OrdersService {
   }
 
   async findAll(params: OrderParamsDto) {
-    const { currentPage, perPage, search, user } = params;
-    const orderQuery = this.orderModel.find({ user }).regex('title', search);
+    const {
+      currentPage,
+      perPage,
+      search,
+      user,
+      paymentGateway,
+      paymentStatus,
+    } = params;
+    const filter: any = this.cleanUpObject({ paymentGateway, paymentStatus });
+    const { user: authUser } = this.req;
+    await this.filterBaseOnUser(filter, authUser);
+    const orderQuery = this.orderModel.find(filter).regex('title', search);
 
     const total = await orderQuery.clone().count();
 
@@ -59,17 +71,45 @@ export class OrdersService {
       .limit(perPage)
       .skip((currentPage - 1) * perPage)
       .populate('user', ['email'])
+      .populate('requests')
       .sort({ createdAt: -1 });
     params.orders = orders;
     params.total = total;
     return params;
   }
 
-  findOne(id: string) {
-    return this.orderModel.findById(id).populate('user');
+  cleanUpObject(object: any) {
+    const newFilter = {};
+    Object.keys(object).forEach((key) => {
+      if (object[key]) {
+        newFilter[key] = object[key];
+      }
+    });
+    return newFilter;
   }
 
-  update(id: string, updateOrderDto: UpdateOrderDto) {
+  async filterBaseOnUser(filter: any, user: UserDocument) {
+    switch (user.role) {
+      case 'user':
+        filter.user = user.id;
+        break;
+      case 'finance-manager':
+        await user.populate('paymentGateway');
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        filter.paymentGateway = user.paymentGateway[0]?.key || '';
+        break;
+      default:
+        return true;
+        break;
+    }
+  }
+
+  findOne(id: string) {
+    return this.orderModel.findById(id).populate('user', 'requests');
+  }
+
+  update(id, updateOrderDto: UpdateOrderDto) {
     return `This action updates a #${id} order`;
   }
 
@@ -78,13 +118,13 @@ export class OrdersService {
   }
 
   async verifyOrder(verifyOrderDto: VerifyOrderDto) {
-    const order = await this.findOne(verifyOrderDto.orderId);
+    const order: OrderDocument = await this.findOne(verifyOrderDto.orderId);
     if (!order) {
       verifyOrderDto.message = [
         'order does not exist and could not be verified',
       ];
     } else {
-      const { platform } = this.req.headers;
+      const { platform } = order;
       verifyOrderDto.order = order;
       try {
         await this.orderFactory

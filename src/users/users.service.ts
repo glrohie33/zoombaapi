@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -21,6 +21,7 @@ export class UsersService {
     @InjectModel('users') private userModel: Model<UserDocument>,
     private walletService: WalletService,
     private ordersService: OrdersService,
+    private logger: Logger,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<CreateUserDto> {
@@ -52,6 +53,7 @@ export class UsersService {
         message = e.message.replace('users validation failed', '').split(',');
       }
       createUserDto.errorMessage = message;
+      this.logger.error(e.message);
     }
 
     return createUserDto;

@@ -95,4 +95,9 @@ UserSchema.virtual('orders', {
   foreignField: 'user',
 });
 
+UserSchema.virtual('paymentGateway', {
+  ref: 'paymentOptions',
+  localField: '_id',
+  foreignField: 'admin',
+});
 export const UserModel = { name: 'users', schema: UserSchema };

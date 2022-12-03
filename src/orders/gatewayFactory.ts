@@ -1,13 +1,11 @@
 import { RaveService } from './rave/rave.service';
-import {Injectable} from "@nestjs/common";
-import {PaymentGateway} from "./paymentGateway";
+import { Injectable } from '@nestjs/common';
+import { PaymentGateway } from './paymentGateway';
+import { UnitedCapitalService } from './united-capital/united-capital.service';
 
 @Injectable()
 export class GatewayFactory {
-  private rave: PaymentGateway;
-  constructor() {
-    this.rave = new RaveService();
-  }
+  constructor(public rave: RaveService, public up: UnitedCapitalService) {}
 
   getInstance(name): PaymentGateway {
     if (name in this) {

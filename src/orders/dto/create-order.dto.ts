@@ -40,7 +40,7 @@ export class CreateOrderDto extends Dto {
   order: OrderDocument;
   user: string;
   downPayment: number;
-  subscriptionPeriod:number;
-  handlingFee:number;
-
+  subscriptionPeriod:number = 0;
+  handlingFee:number = 0;
+  paymentStatus:string='incomplete';
 }

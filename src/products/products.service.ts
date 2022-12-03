@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
@@ -9,12 +9,14 @@ import { MediaService } from '../media/media.service';
 import { ProductParams } from './dto/productParams';
 import { PostsService } from '../posts/posts.service';
 import * as Mongoose from 'mongoose';
-import { filterObject } from '../utils/config';
+import { filterObject, Request } from '../utils/config';
 import { BaseParams } from '../params/baseParams';
+import { REQUEST } from '@nestjs/core';
 
 @Injectable()
 export class ProductsService {
   constructor(
+    @Inject(REQUEST) private req: Request,
     @InjectModel('products') private productModel: Model<ProductDocument>,
     private mediaService: MediaService,
     private postService: PostsService,
@@ -49,16 +51,20 @@ export class ProductsService {
   }
 
   async findAll(params: ProductParams) {
+    const platform = this.req.headers['platform'];
     const { price, brand, currentPage, perPage, categories, search } = params;
     const allFilters = { price, brand, categories };
     const filters: any = filterObject(allFilters);
-    console.log(filters);
     let products: any = [];
     let total = 0;
     const { getFilters, filterBy } = params;
     if (getFilters) {
       filters[filterBy] = getFilters;
     }
+
+    // if (platform) {
+    //   filters.platform = platform;
+    // }
 
     // products = await this.productModel.find()
     const reg = new RegExp(search, 'i');

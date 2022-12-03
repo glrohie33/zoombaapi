@@ -17,6 +17,8 @@ export class PaymentOption {
   downPercent: number;
   @Prop({ type: Number })
   interestRate: number;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'users', default: null })
+  admin: any;
   @Prop({ type: Boolean, default: true })
   activeStatus: boolean;
 }
