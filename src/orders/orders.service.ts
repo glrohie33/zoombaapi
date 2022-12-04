@@ -106,7 +106,7 @@ export class OrdersService {
   }
 
   findOne(id: string) {
-    return this.orderModel.findById(id).populate('user', 'requests');
+    return this.orderModel.findById(id).populate('user').populate('requests');
   }
 
   update(id, updateOrderDto: UpdateOrderDto) {
@@ -125,12 +125,14 @@ export class OrdersService {
       ];
     } else {
       const { platform } = order;
-      verifyOrderDto.order = order;
+      verifyOrderDto.order = order
+      console.log('verifying');
       try {
         await this.orderFactory
           .getInstance(platform)
           .finishOrder(verifyOrderDto);
       } catch (e) {
+        console.log(e.message);
         verifyOrderDto.message = e.message;
       }
     }

@@ -10,7 +10,7 @@ import {
 import { LoginDto } from './dto/login-dto';
 import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
-import {COOKIE_EXPIRE, COOKIE_NAME, JWT_EXPIRES} from '../utils/config';
+import { COOKIE_EXPIRE, COOKIE_NAME, JWT_EXPIRES } from '../utils/config';
 
 @Controller('auth')
 export class AuthController {
@@ -22,8 +22,8 @@ export class AuthController {
     @Req() req: Request,
   ) {
     const auth = await this.authService.loginUser(loginDto);
-    const { status, user, token, errorMessage } = auth;
-    console.log(status, token,user);
+    const { status, user, token, message } = auth;
+    console.log(status, token, user);
     if (auth.status) {
       res.cookie(COOKIE_NAME, token, {
         expires: COOKIE_EXPIRE,
@@ -35,12 +35,10 @@ export class AuthController {
         status,
         user,
       });
-
-
     } else {
       return res.status(HttpStatus.BAD_REQUEST).json({
         code: HttpStatus.BAD_REQUEST,
-        errorMessage,
+        message,
       });
     }
   }

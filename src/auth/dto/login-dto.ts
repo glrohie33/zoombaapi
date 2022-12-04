@@ -24,7 +24,7 @@ export class LoginDto {
   status = false;
 
   @Allow()
-  errorMessage = 'invalid credentials';
+  message = 'invalid credentials';
   user: { firstname; lastname; email; role; id };
   token = '';
 }

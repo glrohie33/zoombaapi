@@ -47,9 +47,16 @@ export class OrdersController extends BaseController {
     return this.success(res, { total, orders });
   }
 
-  @Get('/:id')
-  async findOne(){
+  @Get(':id')
+  async findOne(@Param('id') id: string, @Res() res: Response) {
+    let order: OrderDocument;
 
+    order = await this.ordersService.findOne(id);
+
+    if (!order) {
+      return this.error(res, { message: 'order does not exist' });
+    }
+    return this.success(res, { order });
   }
 
 

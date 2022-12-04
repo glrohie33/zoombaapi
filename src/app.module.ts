@@ -67,17 +67,25 @@ import { RequestsService } from './requests/requests.service';
 import { UnitedCapitalService } from './orders/united-capital/united-capital.service';
 import { RequestModel } from './requests/entities/request.entity';
 import { RequestsController } from './requests/requests.controller';
-import {MailerModule} from "@nestjs-modules/mailer";
-import {HandlebarsAdapter} from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 @Global()
 @Module({
   imports: [
     HttpModule,
     MongooseModule.forRoot(mongourl.url),
     MailerModule.forRoot({
-      transport: 'smtps://user@domain.com:pass@smtp.domain.com',
+      transport: {
+        host: 'smtp.mailtrap.io',
+        port: 2525,
+        secure: false,
+        auth: {
+          user: 'aremuopomulero@gmail.com',
+          pass: 'oluwadunmininu',
+        },
+      },
       defaults: {
-        from: '"nest-modules" <modules@nestjs.com>',
+        from: '"No Reply" <noreply@zoomba.ng>',
       },
       template: {
         dir: __dirname + '/templates',
@@ -144,7 +152,13 @@ import {HandlebarsAdapter} from "@nestjs-modules/mailer/dist/adapters/handlebars
     UnitedCapitalService,
     RequestsService,
   ],
-  exports: [Logger, RaveService, UnitedCapitalService, RequestsService],
+  exports: [
+    Logger,
+    RaveService,
+    UnitedCapitalService,
+    RequestsService,
+    MailServiceService,
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {

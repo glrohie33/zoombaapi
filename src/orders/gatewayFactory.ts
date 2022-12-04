@@ -5,7 +5,7 @@ import { UnitedCapitalService } from './united-capital/united-capital.service';
 
 @Injectable()
 export class GatewayFactory {
-  constructor(public rave: RaveService, public up: UnitedCapitalService) {}
+  constructor(public rave: RaveService, public ucap: UnitedCapitalService) {}
 
   getInstance(name): PaymentGateway {
     if (name in this) {
