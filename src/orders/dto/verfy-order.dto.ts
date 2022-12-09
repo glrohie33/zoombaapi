@@ -8,4 +8,5 @@ export class VerifyOrderDto extends Dto{
     @ApiModelProperty({type:{}})
     data:any;
     order:OrderDocument;
+    paymentStatus:string;
 }

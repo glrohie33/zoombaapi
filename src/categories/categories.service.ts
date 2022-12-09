@@ -5,13 +5,8 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { CategoryDocument } from './entities/category.entity';
 import { Model } from 'mongoose';
 import { MediaService } from '../media/media.service';
-import { CreateMediaDto } from '../media/dto/create-media.dto';
-import { MediaDocument } from '../media/entities/media.entity';
 import * as mongoose from 'mongoose';
-import { BaseParams } from '../params/baseParams';
-import { empty } from 'rxjs';
 import { CategoryParams } from './dto/categoryParams';
-import { Post } from '../posts/entities/post.entity';
 import { PostsService } from '../posts/posts.service';
 import { REQUEST } from '@nestjs/core';
 import { ProductsService } from 'src/products/products.service';
@@ -102,6 +97,15 @@ export class CategoriesService {
     return `This action removes a #${id} category`;
   }
 
+  async getTopCategories() {
+    const platform = this.req.headers['platform'];
+    const data = await this.categoryModel.find({
+      topCategory: true,
+      platforms: { $elemMatch: { $eq: platform } },
+    });
+    return data;
+  }
+
   async getPostData(query) {
     const param: ProductParams = Object.assign(new ProductParams(), query);
     param.categoryId = param.postTypeId;
@@ -121,13 +125,5 @@ export class CategoriesService {
       categoryChildren,
       view: 'productList',
     };
-  }
-
-  getTopCategories() {
-    const platform = this.req.headers['platform'];
-    return this.categoryModel.find({
-      topCategory: true,
-      platforms: { $elemMatch: { $eq: platform } },
-    });
   }
 }

@@ -10,6 +10,7 @@ import {
   UploadedFile,
   UseInterceptors,
   Query,
+  Req,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -22,7 +23,7 @@ import { uploadFileHelper } from '../utils/config';
 import { CategoryParams } from './dto/categoryParams';
 @Controller('categories')
 export class CategoriesController extends BaseController {
-  constructor(private readonly categoriesService: CategoriesService) {
+  constructor(private categoriesService: CategoriesService) {
     super();
   }
 
@@ -61,8 +62,8 @@ export class CategoriesController extends BaseController {
     return this.success(res, { categories, total });
   }
 
-  @Get('topcategories')
-  async topCategories(@Res() res: Response) {
+  @Get('/topCategories')
+  async topCategories(@Res() res: Response, @Query() params: CategoryParams) {
     let categories: any = [];
     categories = await this.categoriesService.getTopCategories();
     return this.success(res, { categories });
