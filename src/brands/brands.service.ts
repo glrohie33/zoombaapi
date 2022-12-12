@@ -43,14 +43,18 @@ export class BrandsService {
   }
 
   async findAll(params: BaseParams) {
-    const { perPage, currentPage, search } = params;
+    const { perPage, currentPage, search, all } = params;
     let brands = [];
     try {
-      brands = await this.brandModel
-        .find()
-        .regex('name', search)
-        .skip((currentPage - 1) * perPage)
-        .limit(perPage);
+      if (all != 'false') {
+        brands = await this.brandModel.find();
+      } else {
+        brands = await this.brandModel
+          .find()
+          .regex('name', search)
+          .skip((currentPage - 1) * perPage)
+          .limit(perPage);
+      }
     } catch (e) {
       console.log(e.message);
     }
