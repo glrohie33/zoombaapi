@@ -16,4 +16,5 @@ export class BaseParams {
   user: string;
   res: Response;
   postTypeId: string;
+  all = 'false';
 }

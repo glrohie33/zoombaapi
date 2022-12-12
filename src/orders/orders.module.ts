@@ -18,6 +18,8 @@ import { WalletModule } from '../wallet/wallet.module';
 import { UnitedCapitalService } from './united-capital/united-capital.service';
 import { PaymentOptionsModule } from '../payment-options/payment-options.module';
 import { PaymentOptionsModel } from '../payment-options/entities/payment-option.entity';
+import { CarbonZeroServiceService } from './carbon-zero-service/carbon-zero-service.service';
+import { ZillaServiceService } from './zilla-service/zilla-service.service';
 
 @Module({
   imports: [
@@ -38,6 +40,8 @@ import { PaymentOptionsModel } from '../payment-options/entities/payment-option.
     ZoombaOrder,
     KampeOrder,
     UnitedCapitalService,
+    CarbonZeroServiceService,
+    ZillaServiceService,
   ],
   exports: [OrdersService],
 })
