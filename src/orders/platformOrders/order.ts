@@ -53,11 +53,12 @@ export abstract class Order {
     if (townCode) {
       shippingDto.forwarding = townCode;
     }
-    const { status, fee } = await this.shippingService.getDeliveryPrice(
+    let { status, fee } = await this.shippingService.getDeliveryPrice(
       shippingDto,
     );
     if (fee == 0 || !status) {
-      throw new Error('cannot process order please try again later');
+      fee = 10000;
+      // throw new Error('cannot process order please try again later');
     }
     return fee;
   }
@@ -77,11 +78,11 @@ export abstract class Order {
 
   async verifyOrder(verifyOrderDto: VerifyOrderDto): Promise<VerifyOrderDto> {
     const { order } = verifyOrderDto;
-    const { status } = await this.gatewayFactory
+    const { status, paymentStatus } = await this.gatewayFactory
       .getInstance(order.paymentGateway)
       .verifyPayment(verifyOrderDto);
     if (status) {
-      order.paymentStatus = 'complete';
+      order.paymentStatus = paymentStatus || 'complete';
       await order.save();
       verifyOrderDto.status = true;
       this.finalizeOrder(order);
@@ -111,7 +112,9 @@ export abstract class Order {
       createOrderDto.handlingFee = this.handlingFee * subscriptionPeriod;
       createOrderDto.totalPrice = totalPrice;
       createOrderDto.grandTotal =
-        createOrderDto.totalPrice + createOrderDto.shippingPrice + createOrderDto.handlingFee;
+        createOrderDto.totalPrice +
+        createOrderDto.shippingPrice +
+        createOrderDto.handlingFee;
       console.log(this.handlingFee);
       createOrderDto.orderItems = createOrderDto.cart.cart;
       createOrderDto.downPayment =

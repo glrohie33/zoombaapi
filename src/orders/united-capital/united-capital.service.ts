@@ -23,19 +23,21 @@ export class UnitedCapitalService implements PaymentGateway {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const requests = verifyOrderDto.order.requests;
-    console.log(verifyOrderDto.order);
     const request = requests[0];
-
-    if (requests.length > 0 && request.status) {
+    if (requests.length > 0) {
       if (!request.approvedBy) {
-        verifyOrderDto.status = false;
-        await this.sendRequestMail();
+        verifyOrderDto.status = true;
+        verifyOrderDto.paymentStatus = 'incomplete';
+        console.log('here');
+        // await this.sendRequestMail();
       } else {
         if (request.status) {
           verifyOrderDto.status = true;
         }
       }
     }
+
+    console.log(verifyOrderDto.paymentStatus);
 
     return Promise.resolve(verifyOrderDto);
   }
@@ -55,9 +57,16 @@ export class UnitedCapitalService implements PaymentGateway {
         },
       });
     } catch (e) {
-      this.logger.log(e.message);
+      this.logger.error(e.message);
     }
   }
 
-  postOrderAction(data: VerifyOrderDto) {}
+  postOrderAction(data: VerifyOrderDto) {
+    data.order
+      .update({ $set: { paymentStatus: 'incomplete' } })
+      .then((resp) => true)
+      .catch((e) => {
+        this.logger.error(e.message);
+      });
+  }
 }

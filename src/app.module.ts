@@ -69,6 +69,7 @@ import { RequestModel } from './requests/entities/request.entity';
 import { RequestsController } from './requests/requests.controller';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { CategoriesService } from './categories/categories.service';
 @Global()
 @Module({
   imports: [
