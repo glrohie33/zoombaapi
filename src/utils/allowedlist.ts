@@ -4,8 +4,10 @@ let domains = [];
 if (enviroment == 'development') {
   domains = [
     'http://seller.dev.zoomba.ng',
+    'https://seller.dev.zoomba.ng',
     'http://dev.zoomba.ng',
     'http://kampe.dev.zoomba.ng',
+    'https://dev.zoomba.ng',
   ];
 } else if (enviroment == 'production') {
   domains = [
