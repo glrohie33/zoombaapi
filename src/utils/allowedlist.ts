@@ -15,6 +15,8 @@ if (enviroment == 'development') {
     'http://seller.zoomba.ng',
     'http://zoomba.ng',
     'http://kampe.zoomba.ng',
+    'http://dev.zoomba.ng',
+    'https://dev.zoomba.ng',
   ];
 } else {
   domains = [
@@ -22,6 +24,7 @@ if (enviroment == 'development') {
     'http://localhost:5000',
     'http://localhost:5454',
     'http://localhost:8080',
+    'http://localhost:8000',
   ];
 }
 
