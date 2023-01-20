@@ -8,9 +8,8 @@ import { Store } from '../../stores/entities/store.entity';
 import { mongo } from 'mongoose';
 import { User } from '../../users/entities/user.entity';
 import { Platform } from '../../platform/entities/platform.entity';
-import * as slug from 'mongoose-slug-generator';
+import {generateSlug} from "../../utils/mongooseValidator";
 
-mongoose.plugin(slug);
 export type ProductDocument = Product & mongoose.Document & mongoose.Schema;
 @Schema({
   timestamps: true,
@@ -93,10 +92,6 @@ export class Product {
 
   @Prop({
     type: String,
-    slug: 'name',
-    unique: true,
-    require: true,
-    slug_padding_size: 1,
   })
   slug: string;
 
@@ -105,6 +100,12 @@ export class Product {
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
+
+ProductSchema.pre('save', async function (next, opts) {
+  this.slug = await generateSlug(this.name, this.constructor, 'name');
+
+  next();
+});
 
 ProductSchema.virtual('productImages', {
   ref: 'medias',

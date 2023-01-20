@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import * as slug from 'mongoose-slug-generator';
 
 export type PlatformDocument = Platform & mongoose.Document;
 @Schema({

@@ -40,7 +40,6 @@ export class MediaController extends BaseController {
     @Res() res: Response,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log(createMediaDto);
     let uploadedFile = null;
     let uploadStatus = false;
     try {

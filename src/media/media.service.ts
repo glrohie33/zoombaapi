@@ -38,7 +38,6 @@ export class MediaService {
     let medias: MediaDocument[] = [];
     const filter = {};
     const { fileType, perPage, currentPage, sort } = params;
-    console.log(currentPage);
     try {
       medias = await this.mediaModel
         .find(filter)

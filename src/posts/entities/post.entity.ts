@@ -1,12 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import * as slug from 'mongoose-slug-generator';
 import { Category } from '../../categories/entities/category.entity';
 import { Store } from '../../stores/entities/store.entity';
 import { Brand } from '../../brands/entities/brand.entity';
 import { Content, ContentSchema } from './subSchema';
 import { Platform } from '../../platform/entities/platform.entity';
-mongoose.plugin(slug);
+import {generateSlug} from "../../utils/mongooseValidator";
+
 export type PostDocument = Post & mongoose.Document;
 
 @Schema({
@@ -43,10 +43,7 @@ export class Post {
 
   @Prop({
     type: String,
-    slug: 'name',
     unique: true,
-    require: true,
-    slug_padding_size: 1,
   })
   slug: string;
   @Prop({ type: String, ref: 'platforms' })
@@ -58,3 +55,9 @@ export class Post {
 
 export const PostSchema = SchemaFactory.createForClass(Post);
 export const PostModel = { name: 'posts', schema: PostSchema };
+
+PostSchema.pre('save', async function (next, opts) {
+  this.slug = await generateSlug(this.name, this.constructor, 'name');
+
+  next();
+});

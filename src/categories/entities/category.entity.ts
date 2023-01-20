@@ -1,12 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
-import * as slug from 'mongoose-slug-generator';
 import { Media } from '../../media/entities/media.entity';
 import { Attribute } from '../../attributes/entities/attribute.entity';
 import { Platform } from '../../platform/entities/platform.entity';
+import {generateSlug} from "../../utils/mongooseValidator";
 
 export type CategoryDocument = Category & mongoose.Document;
-mongoose.plugin(slug);
+
 @Schema({
   timestamps: true,
   toJSON: { virtuals: true },
@@ -18,10 +18,8 @@ export class Category {
 
   @Prop({
     type: String,
-    slug: 'name',
     unique: true,
     require: true,
-    slug_padding_size: 1,
   })
   slug: string;
 
@@ -72,4 +70,9 @@ CategorySchema.virtual('categoryContent', {
   foreignField: 'postTypeId',
 });
 
+CategorySchema.pre('save', async function (next, opts) {
+  this.slug = await generateSlug(this.name, this.constructor, 'name');
+
+  next();
+});
 export const CategoryModel = { name: 'categories', schema: CategorySchema };
