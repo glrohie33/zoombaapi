@@ -15,7 +15,6 @@ export class Brand {
 
   @Prop({
     type: String,
-    slug: 'name',
   })
   slug: string;
 

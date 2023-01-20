@@ -24,7 +24,7 @@ export async function generateSlug(
     return name;
   }
 
-  const lastItem = items[items.length - 1];
+  const lastItem = items[items.length - 1][field];
   const number = lastItem.split('-')[1] || 0;
   return `${name}-${Number(number) + 1}`;
 }
