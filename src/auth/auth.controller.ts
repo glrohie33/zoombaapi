@@ -23,7 +23,6 @@ export class AuthController {
   ) {
     const auth = await this.authService.loginUser(loginDto);
     const { status, user, token, message } = auth;
-    console.log(status, token, user);
     if (auth.status) {
       res.cookie(COOKIE_NAME, token, {
         expires: COOKIE_EXPIRE,
