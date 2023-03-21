@@ -27,20 +27,25 @@ export class AppService {
 
   async getPost(slug: string, filter = 'slug') {
     const post = await this.postService.findOne(slug, filter);
+
     if (post) {
       this.post = post.toJSON();
       await this.loadProducts();
     }
+
     return this.post;
   }
 
   async loadProducts() {
     const query = this.req.query;
+
     if (this.post) {
       const { postType, postTypeId } = this.post;
       query.postTypeId = postTypeId;
+
       if (`${postType}Service` in this && postType != 'post') {
         const post = await this[`${postType}Service`].getPostData(query);
+
         if (post) {
           const newPost = Object.assign(this.post, post);
           this.post = newPost;

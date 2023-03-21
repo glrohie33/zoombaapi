@@ -19,12 +19,13 @@ export async function generateSlug(
   field = 'title',
 ): Promise<string> {
   const items = await model.find({ [field]: name });
+  const slugName = name.toLowerCase().replace(' ', '_');
 
   if (items.length === 0) {
-    return name;
+    return slugName;
   }
 
-  const lastItem = items[items.length - 1][field];
+  const lastItem = items[items.length - 1]['slug'];
   const number = lastItem.split('-')[1] || 0;
-  return `${name}-${Number(number) + 1}`;
+  return `${slugName}-${Number(number) + 1}`;
 }

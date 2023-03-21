@@ -26,17 +26,21 @@ export class ProductsService {
   async create(createProductDto: CreateProductDto): Promise<CreateProductDto> {
     const session = await this.connection.startSession();
     await session.startTransaction();
-    console.log('here');
     try {
       const product = await this.productModel.create(createProductDto);
+
       const files = await this.mediaService.uploadFiles(
         createProductDto.uploadedFiles,
         product.id,
         'products',
       );
-      product.mainImage = files[0].url;
-      product.save();
+
+      if (files && files.length > 0) {
+        product.update({ mainImage: files[0].url });
+      }
+
       await this.postService.createPost(product.name, product.id, 'products');
+
       createProductDto.product = product;
       createProductDto.status = true;
       await session.commitTransaction();
